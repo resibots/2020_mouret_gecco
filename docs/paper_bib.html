@@ -1,0 +1,723 @@
+</dt-appendix>
+</body>
+<script type="text/bibliography">
+%-------------------------------------------%
+% EA Reps
+
+  % "Perhaps the most difficult and least understood area of EA design is that of adapting its internal representation. It is clear that choices of representation play an extremely important role in the performance of an EA, but are difficult to automate"
+  @incollection{de2007parameter,
+    title={Parameter setting in EAs: a 30 year perspective},
+    author={De Jong, Kenneth},
+    booktitle={Parameter setting in evolutionary algorithms},
+    pages={1--18},
+    year={2007},
+    publisher={Springer}
+  }
+
+  @incollection{rothlauf2006representations,
+  title={Representations for genetic and evolutionary algorithms},
+  author={Rothlauf, Franz},
+  booktitle={Representations for Genetic and Evolutionary Algorithms},
+  pages={9--32},
+  year={2006},
+  publisher={Springer}
+  }
+
+  @article{cppn_canalization,
+    title={The emergence of canalization and evolvability in an open-ended, interactive evolutionary system},
+    author={Huizinga, Joost and Stanley, Kenneth O and Clune, Jeff},
+    journal={Artificial life},
+    volume={24},
+    number={3},
+    pages={157--181},
+    year={2018},
+    publisher={MIT Press}
+  }
+
+  % parameter adaptation with bandits
+  @inproceedings{dacosta2008adaptive,
+  title={Adaptive operator selection with dynamic multi-armed bandits},
+  author={DaCosta, Luis and Fialho, Alvaro and Schoenauer, Marc and Sebag, Mich{\`e}le},
+  booktitle={Proceedings of the 10th annual conference on Genetic and evolutionary computation},
+  pages={913--920},
+  year={2008}
+}
+
+%-------------------------------------------%
+% Complexifying Representations
+
+  % Messy GAs 
+  @article{goldberg1989messy,
+    title={Messy genetic algorithms: Motivation, analysis, and first results},
+    author={Goldberg, David E and Korb, Bradley and Deb, Kalyanmoy and others},
+    journal={Complex systems},
+    volume={3},
+    number={5},
+    pages={493--530},
+    year={1989}
+  }
+
+  % Increasing genome length
+  @inproceedings{altenberg1994evolving,
+    title={Evolving better representations through selective genome growth},
+    author={Altenberg, Lee},
+    booktitle={Proceedings of the First IEEE Conference on Evolutionary Computation. IEEE World Congress on Computational Intelligence},
+    pages={182--187},
+    year={1994},
+    organization={IEEE}
+  }
+
+  % Increasing genome / resolution of solution (airfoil)
+  @inproceedings{olhofer2001adaptive,
+    title={Adaptive encoding for aerodynamic shape optimization using evolution strategies},
+    author={Olhofer, Markus and Jin, Yaochu and Sendhoff, Bernhard},
+    booktitle={Proceedings of the 2001 Congress on Evolutionary Computation (IEEE Cat. No. 01TH8546)},
+    volume={1},
+    pages={576--583},
+    year={2001},
+    organization={IEEE}
+  }
+
+  % Increasing genome / resolution of solution (optimal control)
+  @inproceedings{gaier2014evolution,
+    title={Evolution of optimal control for energy-efficient transport},
+    author={Gaier, Adam and Asteroth, Alexander},
+    booktitle={2014 IEEE Intelligent Vehicles Symposium Proceedings},
+    pages={1121--1126},
+    year={2014},
+    organization={IEEE}
+  }
+
+
+  % Genetic Programming
+  @book{koza1990genetic,
+    title={Genetic programming: A paradigm for genetically breeding populations of computer programs to solve problems},
+    author={Koza, John R},
+    volume={34},
+    year={1990},
+    publisher={Stanford University, Department of Computer Science Stanford, CA}
+  }
+
+  % NEAT
+  @article{neat,
+  author = {Stanley, K and Miikkulainen, R},
+  file = {:Users/adam/Documents/Mendeley Desktop/Stanley, Miikkulainen/2002 - Evolving neural networks through augmenting topologies.pdf:pdf},
+  journal = {Evolutionary computation},
+  title = {{Evolving neural networks through augmenting topologies}},
+  year = {2002}
+  }
+
+  % CPPN Neat
+  @article{cppn,
+    title={Compositional pattern producing networks: A novel abstraction of development},
+    author={Stanley, K},
+    journal={Genetic programming and evolvable machines},
+    year={2007},
+    publisher={Springer}
+  }
+
+  % HyperNEAT
+  @article{hyperneat,
+  title={A hypercube-based encoding for evolving large-scale neural networks},
+  author={Stanley, Kenneth O and D'Ambrosio, David B and Gauci, Jason},
+  journal={Artificial life},
+  volume={15},
+  number={2},
+  pages={185--212},
+  year={2009},
+  publisher={MIT Press}
+  }
+
+  % walking tables (provide oscillatory signals to controller)
+  @inproceedings{clune2009evolving,
+  title={Evolving coordinated quadruped gaits with the HyperNEAT generative encoding},
+  author={Clune, Jeff and Beckmann, Benjamin E and Ofria, Charles and Pennock, Robert T},
+  booktitle={2009 iEEE congress on evolutionary computation},
+  pages={2764--2771},
+  year={2009},
+  organization={IEEE}
+  }
+
+  % ES-HyperNEAT
+  @inproceedings{es-hyperneat,
+  title={Evolving the placement and density of neurons in the hyperneat substrate},
+  author={Risi, Sebastian and Lehman, Joel and Stanley, Kenneth O},
+  booktitle={Proceedings of the 12th annual conference on Genetic and evolutionary computation},
+  pages={563--570},
+  year={2010},
+  organization={ACM}
+  }
+
+  % plastic hyperneat
+  @inproceedings{adaptivehyperneat,
+  title={Indirectly encoding neural plasticity as a pattern of local rules},
+  author={Risi, Sebastian and Stanley, Kenneth O},
+  booktitle={International Conference on Simulation of Adaptive Behavior},
+  pages={533--543},
+  year={2010},
+  organization={Springer}
+}
+
+  % Generative design
+  @phdthesis{hornby2003generative,
+  title={Generative Representations for Evolutionary Design Automation},
+  author={Hornby, Gregory S},
+  year={2003},
+  school={Brandeis University}
+  }
+
+  % NAS
+  @article{elsken2019neural,
+    title={Neural Architecture Search: A Survey.},
+    author={Elsken, Thomas and Metzen, Jan Hendrik and Hutter, Frank},
+    journal={Journal of Machine Learning Research},
+    volume={20},
+    number={55},
+    pages={1--21},
+    year={2019}
+  }
+
+  % NAS / CoDeepNEAT
+  @incollection{miikkulainen2019evolving,
+  title={Evolving deep neural networks},
+  author={Miikkulainen, Risto and Liang, Jason and Meyerson, Elliot and Rawal, Aditya and Fink, Daniel and Francon, Olivier and Raju, Bala and Shahrzad, Hormoz and Navruzyan, Arshak and Duffy, Nigel and others},
+  booktitle={Artificial Intelligence in the Age of Neural Networks and Brain Computing},
+  pages={293--312},
+  year={2019},
+  publisher={Elsevier}
+}
+
+%-------------------------------------------%
+% Learned Representations
+
+  % Using ANNs as geno-phenotype map
+  % - Use NE to create mapping
+  % - Based on benchmark functions: FFANN define reps with high locality (on average), redundancy based on neurons in input layer
+  % - GP map evolved with solution genome
+  % -- improved performance despite large increase in dimensionality
+  @inproceedings{simoes2014self,
+    title={Self-adaptive genotype-phenotype maps: neural networks as a meta-representation},
+    author={Sim{\~o}es, Lu{\'\i}s F and Izzo, Dario and Haasdijk, Evert and Eiben, Agoston Endre},
+    booktitle={International Conference on Parallel Problem Solving from Nature},
+    pages={110--119},
+    year={2014},
+    organization={Springer}
+  }
+
+  % ANN-like encoding, evolved to work well on similar classes of problems
+  @inproceedings{scott2015learning,
+    title={Learning genetic representations for classes of real-valued optimization problems},
+    author={Scott, Eric O and Bassett, Jeffrey K},
+    booktitle={Proceedings of the Companion Publication of the 2015 Annual Conference on Genetic and Evolutionary Computation},
+    pages={1075--1082},
+    year={2015},
+    organization={ACM}
+  }
+
+  % Learned encoding (fit over many runs) overfits training landscape
+  @inproceedings{scott2018toward,
+  title={Toward learning neural network encodings for continuous optimization problems},
+  author={Scott, Eric O and De Jong, Kenneth A},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference Companion},
+  pages={123--124},
+  year={2018},
+  organization={ACM}
+  }
+
+  % Autoencoder trained on result of many runs used as representation
+  @inproceedings{moreno2018learning,
+    title={Learning an evolvable genotype-phenotype mapping},
+    author={Moreno, Matthew Andres and Banzhaf, Wolfgang and Ofria, Charles},
+    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+    pages={983--990},
+    year={2018},
+    organization={ACM}
+  }
+
+
+  % Mario GAN
+  @inproceedings{mariogan,
+  title={Evolving mario levels in the latent space of a deep convolutional generative adversarial network},
+  author={Volz, Vanessa and Schrum, Jacob and Liu, Jialin and Lucas, Simon M and Smith, Adam and Risi, Sebastian},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+  pages={221--228},
+  year={2018},
+  organization={ACM}
+  }
+
+  % Latent variable evolution 1 
+  @inproceedings{latentVariableEvolution1_art,
+    title={Deep interactive evolution},
+    author={Bontrager, Philip and Lin, Wending and Togelius, Julian and Risi, Sebastian},
+    booktitle={International Conference on Computational Intelligence in Music, Sound, Art and Design},
+    pages={267--282},
+    year={2018},
+    organization={Springer}
+  }
+
+  % Latent variable evolution 2 
+  @article{latentVariableEvolution2_fingerprint,
+  title={Deepmasterprint: generating fingerprints for presentation attacks},
+  author={Bontrager, Philip and Togelius, Julian and Memon, Nasir},
+  journal={arXiv preprint arXiv:1705.07386},
+  year={2017}
+  }
+
+  % EDAs and using VAEs go guide search
+  %-------------------------------------------%
+
+    % EDAs use probabilistic models to produce promising candidate solutions
+    % - approximate the probability distribution of the fittest individuals and subsequently samples new candidate solutions from this distribution.
+    @article{eda,
+    title={An introduction and survey of estimation of distribution algorithms},
+    author={Hauschild, Mark and Pelikan, Martin},
+    journal={Swarm and evolutionary computation},
+    volume={1},
+    number={3},
+    pages={111--128},
+    year={2011},
+    publisher={Elsevier}
+    }
+
+    % Denoising Autoencoder EDA
+    % - denoising autoencoders as generative models for EDA to solve combinatorial optimization problems
+    @inproceedings{probst2015denoising,
+      title={Denoising autoencoders for fast combinatorial black box optimization},
+      author={Probst, Malte},
+      booktitle={Proceedings of the Companion Publication of the 2015 Annual Conference on Genetic and Evolutionary Computation},
+      pages={1459--1460},
+      year={2015},
+      organization={ACM}
+    }    
+
+    % VAE used to as model in EDA (model pop of promising solutions)
+    @inproceedings{garciarena2018expanding,
+    title={Expanding variational autoencoders for learning and exploiting latent representations in search distributions},
+    author={Garciarena, Unai and Santana, Roberto and Mendiburu, Alexander},
+    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+    pages={849--856},
+    year={2018},
+    organization={ACM}
+    }
+
+    % Using VAE as model in EDA 
+    % - built from a sliding window of historical populations
+    % - fittest candidates from the sampled population history 
+    % - improved sample efficiency on benchmark problems
+    @inproceedings{bhattacharjee2019estimation,
+    title={Estimation of Distribution using Population Queue based Variational Autoencoders},
+    author={Bhattacharjee, Sourodeep and Gras, Robin},
+    booktitle={2019 IEEE Congress on Evolutionary Computation (CEC)},
+    pages={1406--1414},
+    year={2019},
+    organization={IEEE}
+    }
+
+    % Denoising AE trained on top pop from previous generation to guide search in GA
+    @article{churchill2014denoising,
+    title={A denoising autoencoder that guides stochastic search},
+    author={Churchill, Alexander W and Sigtia, Siddharth and Fernando, Chrisantha},
+    journal={arXiv preprint arXiv:1404.1614},
+    year={2014}
+    }
+
+
+
+
+%-------------------------------------------%
+% Learned Behavior Descriptors
+
+
+
+%-------------------------------------------%
+% MAP-Elites and QD
+
+  % MAP-Elites
+  @article{mapelites,
+    title={Illuminating search spaces by mapping elites},
+    author={Mouret, J-B and Clune, J},
+    journal={arXiv preprint arXiv:1504.04909},
+    year={2015}
+  }
+
+  @article{qd,
+    title={Quality diversity: A new frontier for evolutionary computation},
+    author={Pugh, Justin K and Soros, Lisa B and Stanley, Kenneth O},
+    journal={Frontiers in Robotics and AI},
+    volume={3},
+    pages={40},
+    year={2016},
+    publisher={Frontiers}
+  }
+
+  @article{qd2,
+    title={Quality and diversity optimization: A unifying modular framework},
+    author={Cully, A and Demiris, Y},
+    journal={IEEE Trans. on Evolutionary Computation},
+    year={2018},
+    publisher={IEEE}
+  }
+
+  % nature map-elites/IT&E
+  @article{cully2015robots,
+    title={Robots that can adapt like animals},
+    author={Cully, A and Clune, J and Tarapore, D and Mouret, J-B},
+    journal={Nature},
+    year={2015},
+    publisher={Nature Publishing Group}
+  }
+
+  % QD-picbreeder
+  @inproceedings{gaier2019quality,
+  title={Are quality diversity algorithms better at generating stepping stones than objective-based search?},
+  author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference Companion},
+  pages={115--116},
+  year={2019}
+  }
+
+  % MAP-Elites in aerodynamics
+  @inproceedings{gaier2017aerodynamic,
+    title={Aerodynamic design exploration through surrogate-assisted illumination},
+    author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    booktitle={18th AIAA/ISSMO Multidisciplinary Analysis and Optimization Conference},
+    pages={3330},
+    year={2017}
+  }
+
+  % SAIL - ECJ 
+  @article{gaier2018data,
+    title={Data-efficient design exploration through surrogate-assisted illumination},
+    author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    journal={Evolutionary computation},
+    volume={26},
+    number={3},
+    pages={381--410},
+    year={2018},
+    publisher={MIT Press}
+  }
+
+
+  % MAP-Elites in hearthstone - sliding boundaries
+  @inproceedings{fontaine2019mapping,
+  title={Mapping hearthstone deck spaces through MAP-elites with sliding boundaries},
+  author={Fontaine, Matthew C and Lee, Scott and Soros, LB and De Mesentier Silva, Fernando and Togelius, Julian and Hoover, Amy K},
+  booktitle={Proceedings of The Genetic and Evolutionary Computation Conference},
+  pages={161--169},
+  year={2019}
+  }
+
+  % cma-me
+  @article{fontaine2019covariance,
+  title={Covariance Matrix Adaptation for the Rapid Illumination of Behavior Space},
+  author={Fontaine, Matthew C and Togelius, Julian and Nikolaidis, Stefanos and Hoover, Amy K},
+  journal={arXiv preprint arXiv:1912.02400},
+  year={2019}
+  }
+
+  % aurora
+  @inproceedings{cully2019autonomous,
+  title={Autonomous skill discovery with quality-diversity and unsupervised descriptors},
+  author={Cully, Antoine},
+  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+  pages={81--89},
+  year={2019}
+}
+
+  % Line mutation
+  @inproceedings{me_linemut,
+    title={Discovering the elite hypervolume by leveraging interspecies correlation},
+    author={Vassiliades, Vassilis and Mouret, Jean-Baptiste},
+    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
+    pages={149--156},
+    year={2018}
+  }
+
+  % CVT
+  @article{cvt,
+  title={Using centroidal voronoi tessellations to scale up the multidimensional archive of phenotypic elites algorithm},
+  author={Vassiliades, Vassilis and Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
+  journal={IEEE Transactions on Evolutionary Computation},
+  volume={22},
+  number={4},
+  pages={623--630},
+  year={2017},
+  publisher={IEEE}
+  }
+
+%-------------------------------------------%
+% MOO 
+
+  % MOO produces variety with conflicting objectives
+  @article{deb2003unveiling,
+  title={Unveiling innovative design principles by means of multiple conflicting objectives},
+  author={Deb, Kalyanmoy},
+  journal={Engineering Optimization},
+  volume={35},
+  number={5},
+  pages={445--470},
+  year={2003},
+  publisher={Taylor \& Francis}
+  } 
+
+%-------------------------------------------%
+% Generative Models
+
+  @article{ae,
+    title={Reducing the dimensionality of data with neural networks},
+    author={Hinton, G and Salakhutdinov, R},
+    journal={Science},
+    year={2006},
+    publisher={American Association for the Advancement of Science}
+  }
+
+  @article{vae,
+    title={Auto-encoding variational bayes},
+    author={Kingma, Diederik P and Welling, Max},
+    journal={arXiv preprint arXiv:1312.6114},
+    year={2013}
+  }
+
+  @inproceedings{gan,
+    title={Generative adversarial nets},
+    author={Goodfellow, Ian and Pouget-Abadie, Jean and Mirza, Mehdi and Xu, Bing and Warde-Farley, David and Ozair, Sherjil and Courville, Aaron and Bengio, Yoshua},
+    booktitle={Advances in neural information processing systems},
+    pages={2672--2680},
+    year={2014}
+  }
+
+  % KL Divergance
+  @article{kldivergance,
+    title={On information and sufficiency},
+    author={Kullback, Solomon and Leibler, Richard A},
+    journal={The annals of mathematical statistics},
+    volume={22},
+    number={1},
+    pages={79--86},
+    year={1951},
+    publisher={JSTOR}
+  }
+
+  % beta-VAE 
+  @article{higgins2017beta,
+  title={beta-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework.},
+  author={Higgins, Irina and Matthey, Loic and Pal, Arka and Burgess, Christopher and Glorot, Xavier and Botvinick, Matthew and Mohamed, Shakir and Lerchner, Alexander},
+  journal={International Conference on Machine Learning},
+  volume={2},
+  number={5},
+  pages={6},
+  year={2017}
+  }
+
+  % beta-VAE b
+  @article{burgess2018understanding,
+  title={Understanding disentangling in beta-VAE},
+  author={Burgess, Christopher P and Higgins, Irina and Pal, Arka and Matthey, Loic and Watters, Nick and Desjardins, Guillaume and Lerchner, Alexander},
+  journal={arXiv preprint arXiv:1804.03599},
+  year={2018}
+  }
+
+  % beta-TC VAE
+  @inproceedings{chen2018isolating,
+  title={Isolating sources of disentanglement in variational autoencoders},
+  author={Chen, Tian Qi and Li, Xuechen and Grosse, Roger B and Duvenaud, David K},
+  booktitle={Advances in Neural Information Processing Systems},
+  pages={2610--2620},
+  year={2018}
+  }
+
+  @inproceedings{kim2018disentangling,
+  title={Disentangling by Factorising},
+  author={Kim, Hyunjik and Mnih, Andriy},
+  booktitle={International Conference on Machine Learning},
+  pages={2649--2658},
+  year={2018}
+  }
+
+
+%-------------------------------------------%
+% Misc
+
+  % NACA
+  @article{naca,
+    title={The characteristics of 78 related airfoil sections from tests in the variable-density wind tunnel},
+    author={Jacobs, Eastman N and Ward, Kenneth E and Pinkerton, Robert M},
+    year={1933}
+  }
+
+  % Splines
+  @book{nurbs,
+    title={The NURBS book},
+    author={Piegl, Les and Tiller, Wayne},
+    year={2012},
+    publisher={Springer Science \& Business Media}
+  }
+
+  % UCB
+  @article{auer2002finite,
+  title={Finite-time analysis of the multiarmed bandit problem},
+  author={Auer, Peter and Cesa-Bianchi, Nicolo and Fischer, Paul},
+  journal={Machine learning},
+  volume={47},
+  number={2-3},
+  pages={235--256},
+  year={2002},
+  publisher={Springer}
+  }
+
+  % Non-stationary bandit problems
+  @inproceedings{garivier2011upper,
+    title={On upper-confidence bound policies for switching bandit problems},
+    author={Garivier, Aur{\'e}lien and Moulines, Eric},
+    booktitle={International Conference on Algorithmic Learning Theory},
+    pages={174--188},
+    year={2011},
+    organization={Springer}
+  }
+
+  % PCA
+  @article{pca,
+  title={Principal component analysis},
+  author={Wold, Svante and Esbensen, Kim and Geladi, Paul},
+  journal={Chemometrics and intelligent laboratory systems},
+  volume={2},
+  number={1-3},
+  pages={37--52},
+  year={1987},
+  publisher={Elsevier}
+  }
+
+  % bayesian optimization
+  @article{bo,
+  title={Taking the human out of the loop: A review of Bayesian optimization},
+  author={Shahriari, Bobak and Swersky, Kevin and Wang, Ziyu and Adams, Ryan P and De Freitas, Nando},
+  journal={Proceedings of the IEEE},
+  volume={104},
+  number={1},
+  pages={148--175},
+  year={2015},
+  publisher={IEEE}
+ }
+
+
+%-------------------------------------------%
+Modularity
+@article{mouret2008mennag,
+  title={MENNAG: a modular, regular and hierarchical encoding for neural-networks based on attribute grammars},
+  author={Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+  journal={Evolutionary Intelligence},
+  volume={1},
+  number={3},
+  pages={187--207},
+  year={2008},
+  publisher={Springer}
+}
+
+@article{durr2010genetic,
+  title={Genetic representation and evolvability of modular neural controllers},
+  author={Durr, Peter and Floreano, Dario and Mattiussi, Claudio},
+  journal={IEEE Computational Intelligence Magazine},
+  volume={5},
+  number={3},
+  pages={10--19},
+  year={2010},
+  publisher={IEEE}
+}
+
+
+And potentially (if there is space left for references):
+
+@article{hornby2002creating,
+  title={Creating high-level components with a generative representation for body-brain evolution},
+  author={Hornby, Gregory S and Pollack, Jordan B},
+  journal={Artificial life},
+  volume={8},
+  number={3},
+  pages={223--246},
+  year={2002},
+  publisher={MIT Press}
+}
+
+
+@inproceedings{doncieux2004evolving,
+  title={Evolving modular neural networks to solve challenging control problems},
+  author={Doncieux, Stephane and Meyer, Jean-Arcady},
+  booktitle={Proceedings of the Fourth International ICSC Symposium on engineering of intelligent systems (EIS 2004)},
+  pages={1--7},
+  year={2004},
+  organization={ICSC Academic Press Canada}
+}
+
+%-------------------------------------------%
+Misc 
+% Fruit Fly Genome
+@article{fruitfly,
+  title={The genome sequence of Drosophila melanogaster},
+  author={Adams, Mark D and Celniker, Susan E and Holt, Robert A and Evans, Cheryl A and Gocayne, Jeannine D and Amanatides, Peter G and Scherer, Steven E and Li, Peter W and Hoskins, Roger A and Galle, Richard F and others},
+  journal={Science},
+  volume={287},
+  number={5461},
+  pages={2185--2195},
+  year={2000},
+  publisher={American Association for the Advancement of Science}
+}
+
+% PyBullet
+@article{coumans2016pybullet,
+  title={Pybullet, a python module for physics simulation for games, robotics and machine learning},
+  author={Coumans, Erwin and Bai, Yunfei},
+  journal={GitHub repository},
+  year={2016}
+}
+
+@article{cmaes,
+  title={Completely derandomized self-adaptation in evolution strategies},
+  author={Hansen, Nikolaus and Ostermeier, Andreas},
+  journal={Evolutionary computation},
+  volume={9},
+  number={2},
+  pages={159--195},
+  year={2001},
+  publisher={MIT Press}
+}
+
+@article{such2017deep,
+  title={Deep neuroevolution: Genetic algorithms are a competitive alternative for training deep neural networks for reinforcement learning},
+  author={Such, Felipe Petroski and Madhavan, Vashisht and Conti, Edoardo and Lehman, Joel and Stanley, Kenneth O and Clune, Jeff},
+  journal={arXiv preprint arXiv:1712.06567},
+  year={2017}
+}
+
+
+@article{mayne2000constrained,
+  title={Constrained model predictive control: Stability and optimality},
+  author={Mayne, David Q and Rawlings, James B and Rao, Christopher V and Scokaert, Pierre OM},
+  journal={Automatica},
+  volume={36},
+  number={6},
+  pages={789--814},
+  year={2000},
+  publisher={Elsevier}
+}
+
+@article{such2017deep,
+  title={Deep neuroevolution: Genetic algorithms are a competitive alternative for training deep neural networks for reinforcement learning},
+  author={Such, Felipe Petroski and Madhavan, Vashisht and Conti, Edoardo and Lehman, Joel and Stanley, Kenneth O and Clune, Jeff},
+  journal={arXiv preprint arXiv:1712.06567},
+  year={2017}
+}
+</script>
+<!--
+
+
+-->
+<script language="javascript" type="text/javascript" src="lib/p5.min.js"></script>
+<script language="javascript" type="text/javascript" src="lib/p5.dom.js"></script>
+<script language="javascript" type="text/javascript" src="lib/numjs.js"></script>
+<script language="javascript" type="text/javascript" src="lib/agent.js"></script>
+<script language="javascript" type="text/javascript" src="lib/wann_agent.js"></script>
+<script language="javascript" type="text/javascript" src="lib/swingup.js"></script>
+<script src="lib/blazy.js"></script>
+<script language="javascript" type="text/javascript" src="lib/jquery-1.12.4.min.js"></script>
+<script language="javascript" type="text/javascript" src="lib/demo.js"></script>
+<script language="javascript" type="text/javascript" src="lib/controller.js"></script>

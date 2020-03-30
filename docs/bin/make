@@ -1,7 +1,7 @@
 ./bin/markdown-it paper.md > paper_body.html
 ./bin/markdown-it paper_appendix.md > paper_appendix.html
-cat paper_header.html paper_body.html appendix_start draft_appendix.html appendix_end paper_bib.html > paper.html
-cp paper.raft.html index.html
+cat paper_header.html paper_body.html appendix_start paper_appendix.html appendix_end paper_bib.html > paper.html
+cp paper.html index.html
 rm paper.html
 rm paper_appendix.html
 rm paper_body.html
