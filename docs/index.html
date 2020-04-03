@@ -164,7 +164,7 @@ dt-article figcaption b {
 <script src="lib/template.v1.js"></script>
 
 <script type="text/front-matter">
-  title: "Automating Representation Discovery with MAP-Elites"
+  title: "Quality Diversity for Multitask Optimization"
   description: ""
 </script>
 <body>
@@ -179,7 +179,7 @@ dt-article figcaption b {
 <dt-article id="dtbody">
 
 <dt-byline class="l-page transparent"></dt-byline>
-<h1>Automating Representation Discovery with MAP-Elites</h1>
+<h1>Quality Diversity for Multitask Optimization</h1>
 <p></p>
 <dt-byline class="l-page" id="authors_section" hidden>
 <div class="byline">
@@ -199,24 +199,17 @@ dt-article figcaption b {
   </div>
   <div class="date">
     <div class="month">Download</div>
-    <div class="year" style="color: #FF6C00;"><a href="https://arxiv.org/abs/1906.04358" target="_blank">PDF</a></div>
+    <div class="year" style="color: #FF6C00;"><a href="https://arxiv.org/pdf/2003.04407" target="_blank">PDF</a></div>
   </div>
 </div>
 </dt-byline>
 </dt-byline>
 <h2>Abstract</h2>
-<p>The way solutions are represented, or encoded, is usually the result of domain knowledge and experience. In this work, we combine MAP-Elites with Variational Autoencoders to learn a Data-Driven Encoding (DDE) that captures the essence of the highest-performing solutions while still able to encode a wide array of solutions. Our approach learns this data-driven encoding during optimization by balancing between exploiting the DDE to generalize the knowledge contained in the current archive of elites and exploring new representations that are not yet captured by the DDE. Learning representation during optimization allows the algorithm to solve high-dimensional problems, and provides a low-dimensional representation which can be then be re-used. We evaluate the DDE approach by evolving solutions for inverse kinematics of a planar arm (200 joint angles) and for gaits of a 6-legged robot in action space (a sequence of 60 positions for each of the 12 joints). We show that the DDE approach not only accelerates and improves optimization, but produces a powerful encoding that captures a bias for high performance while expressing a variety of solutions.</p>
+<p>Quality Diversity (QD) algorithms are a recent family of optimization algorithms that search for a large set of diverse but high-performing solutions. Interestingly, they can solve multiple tasks at once. For instance, they can find the joint positions required for a robotic arm to reach a set of points, which can also be solved by running a classic optimizer for each target point. However, they cannot solve multiple tasks when the fitness needs to be evaluated independently for each task (e.g., optimizing policies to grasp many different objects). In this paper, we propose an extension of the MAP-Elites algorithm, called Multi-task MAP-Elites, that solves multiple tasks when the fitness function depends on the task. We evaluate it on a simulated parametrized planar arm (10-dimensional search space; 5000 tasks) and on a 6-legged robot with legs of different lengths (36-dimensional search space; 2000 tasks). The results show that in both cases our algorithm outperforms the optimization of each task separately with the CMA-ES algorithm.</p>
 <hr>
 <h2>Introduction</h2>
-<p>How solutions are represented is one of the most critical design decisions in optimization, as the representation defines the way an algorithm can move in the search space<dt-cite key="rothlauf2006representations"></dt-cite>. Work on representations tends to focus on encoding priors or innate biases: aerodynamic designs evolved with splines to encourage smooth forms <dt-cite key="olhofer2001adaptive"></dt-cite>, Compositional Pattern Producing Networks (CPPNs) introduce biases for symmetry and repetition to produce images and neural network weight patterns <dt-cite key="cppn,hyperneat"></dt-cite>, or encodings which aim to encourage modularity in neural networks<dt-cite key="mouret2008mennag,durr2010genetic,doncieux2004evolving"></dt-cite>.</p>
-<p>The best representations balance a bias for high performing solutions, so they can easily be discovered, and the ability to express a diversity of potential solutions, so the the search space can be widely explored. At the one extreme, a representation which only encodes the global optimum is easy to search, but useless for finding any other solution. At the other, a representation which can encode anything presents a difficult and dauntingly vast search space.</p>
-<p>Given a large set of example solutions, representations could be learned from data instead of been hand-tailored by trial-and-error: a learned representation would replicate the same biases toward performance and the same range of expressivity as the source data set. For instance, given a dataset of face images, a variational autoencoder (VAE) <dt-cite key="vae"></dt-cite> or a Generative Adversarial Network (GAN) <dt-cite key="gan"></dt-cite> can learn a low-dimensional latent space, that is, a representation, that makes it possible to explore the space of face images. In essence, the decoder which maps the latent space to the phenotypic space learns the &quot;recipe&quot; of faces. Importantly, the existence of such a low-dimensional latent space is possible because <em>the dataset is a very small part of the set of all possible images</em>.</p>
-<p>However, using a dataset of preselected high-performing solutions &quot;traps&quot; the search within the distribution of solutions that are already known: a VAE trained on white faces will never generate a black face. This limits the usefulness of such data-driven representations for discovering <em>novel</em> solutions to hard problems.</p>
-<p>In this paper, we propose the use of the MAP-Elites algorithm <dt-cite key="mapelites"></dt-cite> to automatically generate a dataset for representations using only a performance function and a diversity space. Quality diversity algorithms like MAP-Elites are a good fit for representation discovery: creating archives of diverse high-performing solutions is precisey their purpose. Using the MAP-Elites archive as a source of example solutions, we can capture the genetic distribution of the highest performing solutions, or elites, by training a VAE and obtaining a latent representation. As the VAE is only trained on elites, this learned representation, or data-driven encoding (DDE), has a strong bias towards solutions with high fitness; and because the elites having varying phenotypes, the DDE is able to express a range of solutions. Though the elites vary along a phenotypic continuum, they commonly have many genotypic similarities<dt-cite key="me_linemut"></dt-cite>, which makes it likely to find a good latent space.</p>
-<p>Nonetheless, MAP-Elites will struggle to find high-performing solutions without an adequate representation. Fortunately, the archive is produced by MAP-Elites in an iterative, any-time fashion, so there is no &quot;end state&quot; to wait for before a DDE can be trained -- a DDE can be trained <em>during optimization</em>. The DDE can then be used to enhance the optimization process. By improving the quality of the archive, the DDE imporves the quality of its own source data, establishing a virtuous cycle of archive and encoding improvement.</p>
-<p>A DDE based on an archive will encounter the same difficulty as any learned encoding: the DDE can only represent solutions that are already in the dataset. How then, can we discover new solutions? Fundamentally, to search for an encoding, we need to both <em>exploit the best known representation</em>, that is, create better solutions according to the current best &quot;recipes&quot;, and also <em>explore new representations</em> -- solutions which do not follow any &quot;recipe&quot;.</p>
-<p>In this paper, we address this challenge by mixing solutions generated with the DDE with solutions obtained using standard MAP-Elites operators. Our algorithm applies classic operators, such as Gaussian mutation, to create candidates which could not be captured by the current DDE. At the same time we leverage the DDE to generalize common patterns across the map and create new solutions that are likely to be high-performing. To avoid introducing new hyper-parameters, we tune this exploration/exploitation trade-off optimally using a multi-armed bandit algorithm <dt-cite key="garivier2011upper"></dt-cite>.</p>
-<p>This new algorithm, DDE-Elites, reframes optimization as a search for representations. Integrating MAP-Elites with a VAE makes it possible to apply  quality diversity to high-dimensional search spaces, and to find effective representations for future uses.</p>
+<p>Quality Diversity (QD) algorithms are a recent family of optimization algorithms that search for a large set of diverse but high-performing solutions <dt-cite key="mouret2015illuminating,cully2017quality,pugh2016quality"></dt-cite>, instead of the global optimum, like in single-objective optimization, or the Pareto frontier, like in multi-objective optimization. For instance, when optimizing aerodynamic 3D shapes, a user might want to be presented with multiple low-drag solutions of diverse materials and curvatures, and then select the best one according to criteria that are not encoded in the fitness function, such as aesthetics <dt-cite key="gaier2018"></dt-cite>
+paces, and to find effective representations for future uses.</p>
 <div style="text-align: center;">
 <img class="b-lazy" src="assets/png/intro.png" style="width: 75%;"/>
 <br/>
@@ -225,418 +218,1274 @@ dt-article figcaption b {
  A data-driven encoding (DDE) is learned by training a VAE on the MAP-Elites archive. High fitness solutions, which increase the bias of the DDE toward performance, are found using the DDE. Novel solutions, which increase the range of solutions which can be expressed, are be found using mutation operators. UCB1, a bandit algorithm, balances the mix of these explorative and exploitative operators.
 </figcaption>
 </div>
-<p>We are interested in domains that have a straightforward low-level representation that is too high-dimensional for most algorithms, for instance:  joints positions at every time-step for a walking robot (12 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>×</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">×</span></span></span></span> 60=720 positions for a 3-second gait of a robot with 12 degrees of freedom), 3D shapes in which each voxel is encoded individually (low-level representation would be 1000-dimensional for a 10 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>×</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">×</span></span></span></span> 10 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mo>×</mo></mrow><annotation encoding="application/x-tex">\times</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.58333em;"></span><span class="strut bottom" style="height:0.66666em;vertical-align:-0.08333em;"></span><span class="base textstyle uncramped"><span class="mord">×</span></span></span></span> 10 grid), images encoded in the pixel-space, etc.</p>
-<p>Ideally, the generated DDE will capture the main regularities of the domain. In robot locomotion, this could correspond to periodic functions, since we already know that a <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mn>3</mn><mn>6</mn></mrow><annotation encoding="application/x-tex">36</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="strut" style="height:0.64444em;"></span><span class="strut bottom" style="height:0.64444em;vertical-align:0em;"></span><span class="base textstyle uncramped"><span class="mord mathrm">3</span><span class="mord mathrm">6</span></span></span></span>-dimensional controller based on periodic functions can produce the numerous joint commands required every second to effectively drive a 12-joint walking robot in many different ways<dt-cite key=cully2015robots></dt-cite>. In many domains the space of possible solutions can be vast, while the inherent dimensionality of interesting solutions still compact. By purposefully seeking out a space of solutions, rather than individual solutions themselves, we can solve high-dimensional problems in a lower dimensional space.</p>
 <hr>
 <h2>Related Work</h2>
 <p><em>If you would like to discuss any issues or give feedback, please visit the <a href="https://github.com/weightagnostic/weightagnostic.github.io/issues">GitHub</a> repository of this page for more information.</em></p>
 </dt-article>
 <dt-appendix>
 <h2>Acknowledgements</h2>
-<p>We would like to thank Douglas Eck, Geoffrey Hinton, Anja Austermann, Jeff Dean, Luke Metz, Ben Poole, Jean-Baptiste Mouret, Michiel Adriaan Unico Bacchiani, Heiga Zen, and Alexander M. Lamb for their thoughtful feedback.</p>
-<p>The experiments in this work were performed on 96-core CPU Linux virtual machines provided by <a href="https://cloud.google.com/">Google Cloud Platform</a>.</p>
-<p>This article was prepared using the <a href="https://distill.pub">Distill</a> <a href="https://github.com/distillpub/template">template</a>. Interactive demos were built with <a href="https://p5js.org">p5.js</a>.</p>
-<p>Any errors here are our own and do not reflect opinions of our proofreaders and colleagues. If you see mistakes or want to suggest changes, feel free to contribute feedback by participating in the discussion <a href="https://github.com/weightagnostic/weightagnostic.github.io/issues">forum</a> for this article.</p>
+<p>This article was prepared using the <a href="https://distill.pub">Distill</a> <a href="https://github.com/distillpub/template">template</a>.</p>
 <h3 id="citation">Citation</h3>
 <p>For attribution in academic contexts, please cite this work as</p>
-<pre class="citation short">Adam Gaier and David Ha, "Weight Agnostic Neural Networks", 2019.</pre>
+<pre class="citation short">JB Mouret and G. Maguire, "Quality Diversity for Multitask Optimization", Proc. of GECCO. 2020.</pre>
 <p>BibTeX citation</p>
-<pre class="citation long">@article{wann2019,
-  author = {Adam Gaier and David Ha},
-  title  = {Weight Agnostic Neural Networks},
-  eprint = {arXiv:1906.04358},
-  url    = {https://weightagnostic.github.io},
-  note   = "\url{https://weightagnostic.github.io}",
-  year   = {2019}
+<pre class="citation long">@inproceedings{mouret2020,
+  author = {Jean-Baptiste Mouret and Glenn Maguire},
+  title  = {uality Diversity for Multitask Optimization},
+  eprint = {arXiv:2003.04407},
+  booktitle = {Proceedings of GECCO},
+  url    = {https://resibots.eu/2020_mouret_gecco},
+  note   = "\url{https://resibots.eu/2020_mouret_gecco}",
+  year   = {2020}
 }</pre>
 <h2>Open Source Code</h2>
-<p>We release a general purpose tool, not only to facilitate reproduction, but also for further research in this direction. Our NumPy <dt-cite key="van2011numpy"></dt-cite> implementation of NEAT <dt-cite key="neat"></dt-cite> supports MPI <dt-cite key="mpi_library"></dt-cite> and OpenAI Gym <dt-cite key="openai_gym"></dt-cite> environments.</p>
-<p>Please see our <a href="https://github.com/google/brain-tokyo-workshop/tree/master/WANNRelease">repo</a> for details about the code release.</p>
-<h2>Reuse</h2>
-<p>Diagrams and text are licensed under Creative Commons Attribution <a href="https://creativecommons.org/licenses/by/4.0/">CC-BY 4.0</a> with the <a href="https://github.com/weightagnostic/weightagnostic.github.io">source available on GitHub</a>, unless noted otherwise. The figures that have been reused from other sources don’t fall under this license and can be recognized by the citations in their caption.</p>
-<h2>Supplementary Materials</h2>
-<p>For further discussion about the implementation details of the experiments, and results for multiple independent runs of the search algorithms, please refer to the Supplementary Materials section in the <a href="https://arxiv.org/abs/1906.04358">pdf</a> version of this article.</p>
-<h2>Performance Profiles</h2>
-<h3>Average Performance (100 trial) versus Weight for Champion Networks</h3>
-<div style="text-align: center;">
-<img src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/png/champ_swingup_profile.png" style="display: block; margin: auto; width: 60%;"/>
-<figcaption style="text-align: center;">
-CartpoleSwingUp
-</figcaption>
-<br/>
-<img src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/png/champ_biped_profile.png" style="display: block; margin: auto; width: 60%;"/>
-<figcaption style="text-align: center;">
-BipedalWalker-v2
-</figcaption>
-<br/>
-<img src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/png/champ_carracing_profile.png" style="display: block; margin: auto; width: 60%;"/>
-<figcaption style="text-align: center;">
-CarRacing-v0
-</figcaption>
-</div>
-<h2>Additional Bipedal Walker Results</h2>
-<h3>Increasing the search space</h3>
-<div style="text-align: center;">
-<img src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/png/biped_net_outConns.png" style="display: block; margin: auto; width: 100%;"/>
-<figcaption style="text-align: left;">If we allow connection between outputs (a small modification to the search space), we discovered a simple and elegant WANN for the Bipedal Walker task. This particular network notably ignores many LIDAR, angle, and other input signals that are not required for the task. Refer to section on <i>Performance and Complexity</i> in the main text.</figcaption>
-</div>
-<div style="text-align: center;">
-<video class="b-lazy" data-src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/mp4/trial_outConns_-1.0.mp4" type="video/mp4" autoplay muted playsinline loop style="display: block; margin: auto; width: 100%;" ></video>
-<figcaption style="text-align: left;">Rollout of policy using above network, weight set to -1.0. Gait is simpler compared to the network in the main text, possibly due to network's simplicity.</figcaption>
-</div>
-<h3>Bloopers</h3>
-<div style="text-align: center;">
-<video class="b-lazy" data-src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/mp4/trial_biped_failures.mp4" type="video/mp4" autoplay muted playsinline loop style="display: block; margin: auto; width: 100%;" ></video>
-<figcaption style="text-align: left;">Failure cases at bad weight values.</figcaption>
-</div>
-<div style="text-align: center;">
-<video class="b-lazy" data-src="https://storage.googleapis.com/quickdraw-models/sketchRNN/wann/mp4/trial_balancer.mp4" type="video/mp4" autoplay muted playsinline loop style="display: block; margin: auto; width: 100%;" ></video>
-<figcaption style="text-align: left;">But even at some bad weights (here, weight set to +1.14), our agent performs non trivial actions like balancing.</figcaption>
-</div>
 </dt-appendix>
 </dt-appendix>
 </body>
 <script type="text/bibliography">
-%-------------------------------------------%
-% EA Reps
 
-  % "Perhaps the most difficult and least understood area of EA design is that of adapting its internal representation. It is clear that choices of representation play an extremely important role in the performance of an EA, but are difficult to automate"
-  @incollection{de2007parameter,
-    title={Parameter setting in EAs: a 30 year perspective},
-    author={De Jong, Kenneth},
-    booktitle={Parameter setting in evolutionary algorithms},
-    pages={1--18},
-    year={2007},
-    publisher={Springer}
-  }
-
-  @incollection{rothlauf2006representations,
-  title={Representations for genetic and evolutionary algorithms},
-  author={Rothlauf, Franz},
-  booktitle={Representations for Genetic and Evolutionary Algorithms},
-  pages={9--32},
-  year={2006},
-  publisher={Springer}
-  }
-
-  @article{cppn_canalization,
-    title={The emergence of canalization and evolvability in an open-ended, interactive evolutionary system},
-    author={Huizinga, Joost and Stanley, Kenneth O and Clune, Jeff},
-    journal={Artificial life},
-    volume={24},
-    number={3},
-    pages={157--181},
-    year={2018},
-    publisher={MIT Press}
-  }
-
-  % parameter adaptation with bandits
-  @inproceedings{dacosta2008adaptive,
-  title={Adaptive operator selection with dynamic multi-armed bandits},
-  author={DaCosta, Luis and Fialho, Alvaro and Schoenauer, Marc and Sebag, Mich{\`e}le},
-  booktitle={Proceedings of the 10th annual conference on Genetic and evolutionary computation},
-  pages={913--920},
-  year={2008}
-}
-
-%-------------------------------------------%
-% Complexifying Representations
-
-  % Messy GAs 
-  @article{goldberg1989messy,
-    title={Messy genetic algorithms: Motivation, analysis, and first results},
-    author={Goldberg, David E and Korb, Bradley and Deb, Kalyanmoy and others},
-    journal={Complex systems},
-    volume={3},
-    number={5},
-    pages={493--530},
-    year={1989}
-  }
-
-  % Increasing genome length
-  @inproceedings{altenberg1994evolving,
-    title={Evolving better representations through selective genome growth},
-    author={Altenberg, Lee},
-    booktitle={Proceedings of the First IEEE Conference on Evolutionary Computation. IEEE World Congress on Computational Intelligence},
-    pages={182--187},
-    year={1994},
-    organization={IEEE}
-  }
-
-  % Increasing genome / resolution of solution (airfoil)
-  @inproceedings{olhofer2001adaptive,
-    title={Adaptive encoding for aerodynamic shape optimization using evolution strategies},
-    author={Olhofer, Markus and Jin, Yaochu and Sendhoff, Bernhard},
-    booktitle={Proceedings of the 2001 Congress on Evolutionary Computation (IEEE Cat. No. 01TH8546)},
-    volume={1},
-    pages={576--583},
-    year={2001},
-    organization={IEEE}
-  }
-
-  % Increasing genome / resolution of solution (optimal control)
-  @inproceedings{gaier2014evolution,
-    title={Evolution of optimal control for energy-efficient transport},
-    author={Gaier, Adam and Asteroth, Alexander},
-    booktitle={2014 IEEE Intelligent Vehicles Symposium Proceedings},
-    pages={1121--1126},
-    year={2014},
-    organization={IEEE}
-  }
-
-
-  % Genetic Programming
-  @book{koza1990genetic,
-    title={Genetic programming: A paradigm for genetically breeding populations of computer programs to solve problems},
-    author={Koza, John R},
-    volume={34},
-    year={1990},
-    publisher={Stanford University, Department of Computer Science Stanford, CA}
-  }
-
-  % NEAT
-  @article{neat,
-  author = {Stanley, K and Miikkulainen, R},
-  file = {:Users/adam/Documents/Mendeley Desktop/Stanley, Miikkulainen/2002 - Evolving neural networks through augmenting topologies.pdf:pdf},
-  journal = {Evolutionary computation},
-  title = {{Evolving neural networks through augmenting topologies}},
-  year = {2002}
-  }
-
-  % CPPN Neat
-  @article{cppn,
-    title={Compositional pattern producing networks: A novel abstraction of development},
-    author={Stanley, K},
-    journal={Genetic programming and evolvable machines},
-    year={2007},
-    publisher={Springer}
-  }
-
-  % HyperNEAT
-  @article{hyperneat,
-  title={A hypercube-based encoding for evolving large-scale neural networks},
-  author={Stanley, Kenneth O and D'Ambrosio, David B and Gauci, Jason},
-  journal={Artificial life},
-  volume={15},
-  number={2},
-  pages={185--212},
-  year={2009},
-  publisher={MIT Press}
-  }
-
-  % walking tables (provide oscillatory signals to controller)
-  @inproceedings{clune2009evolving,
-  title={Evolving coordinated quadruped gaits with the HyperNEAT generative encoding},
-  author={Clune, Jeff and Beckmann, Benjamin E and Ofria, Charles and Pennock, Robert T},
-  booktitle={2009 iEEE congress on evolutionary computation},
-  pages={2764--2771},
-  year={2009},
-  organization={IEEE}
-  }
-
-  % ES-HyperNEAT
-  @inproceedings{es-hyperneat,
-  title={Evolving the placement and density of neurons in the hyperneat substrate},
-  author={Risi, Sebastian and Lehman, Joel and Stanley, Kenneth O},
-  booktitle={Proceedings of the 12th annual conference on Genetic and evolutionary computation},
-  pages={563--570},
-  year={2010},
-  organization={ACM}
-  }
-
-  % plastic hyperneat
-  @inproceedings{adaptivehyperneat,
-  title={Indirectly encoding neural plasticity as a pattern of local rules},
-  author={Risi, Sebastian and Stanley, Kenneth O},
-  booktitle={International Conference on Simulation of Adaptive Behavior},
-  pages={533--543},
-  year={2010},
-  organization={Springer}
-}
-
-  % Generative design
-  @phdthesis{hornby2003generative,
-  title={Generative Representations for Evolutionary Design Automation},
-  author={Hornby, Gregory S},
-  year={2003},
-  school={Brandeis University}
-  }
-
-  % NAS
-  @article{elsken2019neural,
-    title={Neural Architecture Search: A Survey.},
-    author={Elsken, Thomas and Metzen, Jan Hendrik and Hutter, Frank},
-    journal={Journal of Machine Learning Research},
-    volume={20},
-    number={55},
-    pages={1--21},
-    year={2019}
-  }
-
-  % NAS / CoDeepNEAT
-  @incollection{miikkulainen2019evolving,
-  title={Evolving deep neural networks},
-  author={Miikkulainen, Risto and Liang, Jason and Meyerson, Elliot and Rawal, Aditya and Fink, Daniel and Francon, Olivier and Raju, Bala and Shahrzad, Hormoz and Navruzyan, Arshak and Duffy, Nigel and others},
-  booktitle={Artificial Intelligence in the Age of Neural Networks and Brain Computing},
-  pages={293--312},
-  year={2019},
-  publisher={Elsevier}
-}
-
-%-------------------------------------------%
-% Learned Representations
-
-  % Using ANNs as geno-phenotype map
-  % - Use NE to create mapping
-  % - Based on benchmark functions: FFANN define reps with high locality (on average), redundancy based on neurons in input layer
-  % - GP map evolved with solution genome
-  % -- improved performance despite large increase in dimensionality
-  @inproceedings{simoes2014self,
-    title={Self-adaptive genotype-phenotype maps: neural networks as a meta-representation},
-    author={Sim{\~o}es, Lu{\'\i}s F and Izzo, Dario and Haasdijk, Evert and Eiben, Agoston Endre},
-    booktitle={International Conference on Parallel Problem Solving from Nature},
-    pages={110--119},
-    year={2014},
-    organization={Springer}
-  }
-
-  % ANN-like encoding, evolved to work well on similar classes of problems
-  @inproceedings{scott2015learning,
-    title={Learning genetic representations for classes of real-valued optimization problems},
-    author={Scott, Eric O and Bassett, Jeffrey K},
-    booktitle={Proceedings of the Companion Publication of the 2015 Annual Conference on Genetic and Evolutionary Computation},
-    pages={1075--1082},
-    year={2015},
-    organization={ACM}
-  }
-
-  % Learned encoding (fit over many runs) overfits training landscape
-  @inproceedings{scott2018toward,
-  title={Toward learning neural network encodings for continuous optimization problems},
-  author={Scott, Eric O and De Jong, Kenneth A},
-  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference Companion},
-  pages={123--124},
-  year={2018},
-  organization={ACM}
-  }
-
-  % Autoencoder trained on result of many runs used as representation
-  @inproceedings{moreno2018learning,
-    title={Learning an evolvable genotype-phenotype mapping},
-    author={Moreno, Matthew Andres and Banzhaf, Wolfgang and Ofria, Charles},
-    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-    pages={983--990},
-    year={2018},
-    organization={ACM}
-  }
-
-
-  % Mario GAN
-  @inproceedings{mariogan,
-  title={Evolving mario levels in the latent space of a deep convolutional generative adversarial network},
-  author={Volz, Vanessa and Schrum, Jacob and Liu, Jialin and Lucas, Simon M and Smith, Adam and Risi, Sebastian},
-  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-  pages={221--228},
-  year={2018},
-  organization={ACM}
-  }
-
-  % Latent variable evolution 1 
-  @inproceedings{latentVariableEvolution1_art,
-    title={Deep interactive evolution},
-    author={Bontrager, Philip and Lin, Wending and Togelius, Julian and Risi, Sebastian},
-    booktitle={International Conference on Computational Intelligence in Music, Sound, Art and Design},
-    pages={267--282},
-    year={2018},
-    organization={Springer}
-  }
-
-  % Latent variable evolution 2 
-  @article{latentVariableEvolution2_fingerprint,
-  title={Deepmasterprint: generating fingerprints for presentation attacks},
-  author={Bontrager, Philip and Togelius, Julian and Memon, Nasir},
-  journal={arXiv preprint arXiv:1705.07386},
-  year={2017}
-  }
-
-  % EDAs and using VAEs go guide search
-  %-------------------------------------------%
-
-    % EDAs use probabilistic models to produce promising candidate solutions
-    % - approximate the probability distribution of the fittest individuals and subsequently samples new candidate solutions from this distribution.
-    @article{eda,
-    title={An introduction and survey of estimation of distribution algorithms},
-    author={Hauschild, Mark and Pelikan, Martin},
-    journal={Swarm and evolutionary computation},
-    volume={1},
-    number={3},
-    pages={111--128},
-    year={2011},
-    publisher={Elsevier}
-    }
-
-    % Denoising Autoencoder EDA
-    % - denoising autoencoders as generative models for EDA to solve combinatorial optimization problems
-    @inproceedings{probst2015denoising,
-      title={Denoising autoencoders for fast combinatorial black box optimization},
-      author={Probst, Malte},
-      booktitle={Proceedings of the Companion Publication of the 2015 Annual Conference on Genetic and Evolutionary Computation},
-      pages={1459--1460},
-      year={2015},
-      organization={ACM}
-    }    
-
-    % VAE used to as model in EDA (model pop of promising solutions)
-    @inproceedings{garciarena2018expanding,
-    title={Expanding variational autoencoders for learning and exploiting latent representations in search distributions},
-    author={Garciarena, Unai and Santana, Roberto and Mendiburu, Alexander},
-    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-    pages={849--856},
-    year={2018},
-    organization={ACM}
-    }
-
-    % Using VAE as model in EDA 
-    % - built from a sliding window of historical populations
-    % - fittest candidates from the sampled population history 
-    % - improved sample efficiency on benchmark problems
-    @inproceedings{bhattacharjee2019estimation,
-    title={Estimation of Distribution using Population Queue based Variational Autoencoders},
-    author={Bhattacharjee, Sourodeep and Gras, Robin},
-    booktitle={2019 IEEE Congress on Evolutionary Computation (CEC)},
-    pages={1406--1414},
+  @inproceedings{gravina2019procedural,
+    title={Procedural content generation through quality diversity},
+    author={Gravina, Daniele and Khalifa, Ahmed and Liapis, Antonios and Togelius, Julian and Yannakakis, Georgios N},
+    booktitle={2019 IEEE Conference on Games (CoG)},
+    pages={1--8},
     year={2019},
     organization={IEEE}
-    }
-
-    % Denoising AE trained on top pop from previous generation to guide search in GA
-    @article{churchill2014denoising,
-    title={A denoising autoencoder that guides stochastic search},
-    author={Churchill, Alexander W and Sigtia, Siddharth and Fernando, Chrisantha},
-    journal={arXiv preprint arXiv:1404.1614},
-    year={2014}
-    }
-
-
-
-
-%-------------------------------------------%
-% Learned Behavior Descriptors
-
-
-
-%-------------------------------------------%
-% MAP-Elites and QD
-
-  % MAP-Elites
-  @article{mapelites,
-    title={Illuminating search spaces by mapping elites},
-    author={Mouret, J-B and Clune, J},
-    journal={arXiv preprint arXiv:1504.04909},
-    year={2015}
   }
-
-  @article{qd,
+  
+  @article{adams2000genome,
+    title={The genome sequence of Drosophila melanogaster},
+    author={Adams, Mark D and Celniker, Susan E and Holt, Robert A and Evans, Cheryl A and Gocayne, Jeannine D and Amanatides, Peter G and Scherer, Steven E and Li, Peter W and Hoskins, Roger A and Galle, Richard F and others},
+    journal={Science},
+    volume={287},
+    number={5461},
+    pages={2185--2195},
+    year={2000},
+    publisher={American Association for the Advancement of Science}
+  }
+  
+  @article{pearce2018continuous,
+    title={Continuous multi-task Bayesian Optimisation with correlation},
+    author={Pearce, Michael and Branke, Juergen},
+    journal={European Journal of Operational Research},
+    volume={270},
+    number={3},
+    pages={1074--1085},
+    year={2018},
+    publisher={Elsevier}
+  }
+  
+  @article{karafotias2014parameter,
+    title={Parameter control in evolutionary algorithms: Trends and challenges},
+    author={Karafotias, Giorgos and Hoogendoorn, Mark and Eiben, {\'A}goston E},
+    journal={IEEE Transactions on Evolutionary Computation},
+    volume={19},
+    number={2},
+    pages={167--187},
+    year={2014},
+    publisher={IEEE}
+  }
+  @article{eiben1999parameter,
+    title={Parameter control in evolutionary algorithms},
+    author={Eiben, {\'A}goston E and Hinterding, Robert and Michalewicz, Zbigniew},
+    journal={IEEE Transactions on evolutionary computation},
+    volume={3},
+    number={2},
+    pages={124--141},
+    year={1999},
+    publisher={IEEE}
+  }
+  
+  
+  @article{mouret2015illuminating,
+    title={Illuminating search spaces by mapping elites},
+    author={Mouret, Jean-Baptiste and Clune, Jeff},
+    journal={arXiv preprint},
+    year={2015},
+    url={http://arxiv.org/abs/1504.04909},
+    keywords={resilience, evolution, illumination}
+  }
+  
+  % journals
+  @article{koos:hal-00932862,
+    TITLE = {{Fast Damage Recovery in Robotics with the T-Resilience Algorithm}},
+    AUTHOR = {Koos, Sylvain and Cully, Antoine and Mouret, Jean-Baptiste},
+    JOURNAL = {{International Journal of Robotics Research (IJRR)}},
+    PUBLISHER = {{SAGE Publications}},
+    VOLUME = {32},
+    NUMBER = {14},
+    PAGES = {1700-1723},
+    YEAR = {2013},
+    MONTH = Dec,
+    DOI = {10.1177/0278364913499192},
+    URL = {https://hal.archives-ouvertes.fr/hal-00932862},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00932862/document},
+    HAL_ID = {hal-00932862},
+    HAL_VERSION = {v1},
+    keywords={resilience,robotics, learning,reality-gap},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @article{doncieux:hal-01150254,
+    TITLE = {{Beyond black-box optimization: a review of selective pressures for evolutionary robotics}},
+    AUTHOR = {Doncieux, Stephane and Mouret, Jean-Baptiste},
+    JOURNAL = {{Evolutionary Intelligence}},
+    VOLUME = {7},
+    NUMBER = {2},
+    PAGES = {71-93},
+    YEAR = {2014},
+    MONTH = Jul,
+    DOI = {10.1007/s12065-014-0110-x},
+    URL = {http://hal.upmc.fr/hal-01150254},
+    HAL_ID = {hal-01150254},
+    HAL_VERSION = {v1},
+    keywords={evolution, diversity},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @article{tarapore:hal-01150508,
+    TITLE = {{Evolvability signatures of generative encodings: Beyond standard performance benchmarks}},
+    AUTHOR = {Tarapore, Danesh and Mouret, Jean-Baptiste},
+    JOURNAL = {{Information Sciences}},
+    PUBLISHER = {{Elsevier}},
+    VOLUME = {313},
+    PAGES = {43-61},
+    YEAR = {2015},
+    MONTH = Aug,
+    DOI = {10.1016/j.ins.2015.03.046},
+    URL = {http://hal.upmc.fr/hal-01150508},
+    HAL_ID = {hal-01150508},
+    HAL_VERSION = {v1},
+    keywords={evolution, encodings},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @article{cully:hal-01095543,
+    TITLE = {{Evolving a Behavioral Repertoire for a Walking Robot}},
+    AUTHOR = {Cully, Antoine and Mouret, Jean-Baptiste},
+    JOURNAL = {{Evolutionary Computation}},
+    PUBLISHER = {{MIT Press}},
+    VOLUME = {24},
+    NUMBER = {1},
+    PAGES = {59-88},
+    YEAR = {2016},
+    DOI = {10.1162/EVCO\_a\_00143},
+    URL = {https://hal.inria.fr/hal-01095543},
+    PDF = {https://hal.inria.fr/hal-01095543/document},
+    video={https://www.youtube.com/watch?v=1xmGGm6eb9I},
+    HAL_ID = {hal-01095543},
+    HAL_VERSION = {v1},
+    doi={10.1145/2463372.2463399},
+    keywords={robotics, evolution, resilience, reality-gap, diversity, illumination},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @article{koos:hal-00687617,
+    TITLE = {{The Transferability Approach: Crossing the Reality Gap in Evolutionary Robotics}},
+    AUTHOR = {Koos, Sylvain and Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    JOURNAL = {{IEEE Transactions on Evolutionary Computation (TEC)}},
+    PUBLISHER = {{IEEE}},
+    volume={17},
+    number={1},
+    pages={122--145},
+    year={2013},
+    DOI = {10.1109/TEVC.2012.2185849},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687617},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687617/document},
+    HAL_ID = {hal-00687617},
+    HAL_VERSION = {v1},
+    video={https://www.youtube.com/watch?v=qDPbXvADyio https://www.youtube.com/watch?time_continue=110&v=9LW1tjFVyLY},
+    keywords={robotics, evolution, reality-gap},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  
+  @article{mouret:hal-00687609,
+    TITLE = {{Encouraging Behavioral Diversity in Evolutionary Robotics: an Empirical Study}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    JOURNAL = {{Evolutionary Computation}},
+    PUBLISHER = {MIT Press},
+    VOLUME = {20},
+    NUMBER = {1},
+    PAGES = {91-133},
+    YEAR = {2012},
+    DOI = {10.1162/EVCO\_a\_00048},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687609/document},
+    HAL_ID = {hal-00687609},
+    HAL_VERSION = {v1},
+    keywords={evolution, diversity},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  @article{reuillon:hal-01118936,
+    TITLE = {A New Method to Evaluate Simulation Models: The Calibration Profile (CP) Algorithm},
+    AUTHOR = {Reuillon, Romain and Schmitt, Clara and De Aldama, Ricardo and Mouret, Jean-Baptiste},
+    JOURNAL = {{Journal of Artificial Societies and Social Simulation}},
+    PUBLISHER = {{SimSoc Consortium}},
+    VOLUME = {18},
+    NUMBER = {1},
+    URL = {http://jasss.soc.surrey.ac.uk/18/1/12.html},
+    YEAR = {2015},
+    MONTH = Jan,
+    doi = {10.18564/jasss.2675},
+    keywords={illumination,evolution},
+    HAL_ID = {hal-01118936},
+    HAL_VERSION = {v1},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    keywords={evolution},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @article{doncieux:hal-01131267,
+    TITLE = {{Evolutionary robotics: what, why, and where to}},
+    AUTHOR = {Doncieux, Stephane and Bredeche, Nicolas and Mouret, Jean-Baptiste and Eiben, Gusz AE},
+    JOURNAL = {{Frontiers in Robotics and AI}},
+    PUBLISHER = {{Frontiers}},
+    PAGES = {10.3389/frobt.2015.00004},
+    YEAR = {2015},
+    MONTH = Mar,
+    DOI = {10.3389/frobt.2015.00004},
+    PDF = {https://hal.archives-ouvertes.fr/hal-01131267/document},
+    HAL_ID = {hal-01131267},
+    HAL_VERSION = {v1},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    keywords={evolution},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @article{cully:hal-01158243,
+    TITLE = {{Robots that can adapt like animals}},
+    AUTHOR = {Cully, Antoine and Clune, Jeff and Tarapore, Danesh and Mouret, Jean-Baptiste},
+    JOURNAL = {{Nature}},
+    PUBLISHER = {{Nature Publishing Group}},
+    VOLUME = {521},
+    NUMBER = {7553},
+    PAGES = {503-507},
+    YEAR = {2015},
+    MONTH = May,
+    DOI = {10.1038/nature14422},
+    PDF = {https://hal.archives-ouvertes.fr/hal-01158243/document},
+    SRC={https://github.com/resibots/cully_2015_nature},
+    video={https://www.youtube.com/watch?v=T-c17RKh3uE https://www.youtube.com/watch?v=IHQgnpSphEI},
+    HAL_ID = {hal-01158243},
+    HAL_VERSION = {v1},
+    keywords={robotics, evolution, resilience, reality-gap, learning, illumination},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @article{olavellefsen:hal-01138901,
+    TITLE = {{Neural Modularity Helps Organisms Evolve to Learn New Skills without Forgetting Old Skills}},
+    AUTHOR = {Ellefsen, Kai Olav and Mouret, Jean-Baptiste and Clune, Jeff},
+    JOURNAL = {{PLoS Computational Biology}},
+    PUBLISHER = {{Public Library of Science}},
+    VOLUME = {11},
+    NUMBER = {4},
+    PAGES = {e1004128},
+    YEAR = {2015},
+    DOI = {10.1371/journal.pcbi.1004128.s009},
+    URL = {https://hal.archives-ouvertes.fr/hal-01138901},
+    PDF = {https://hal.archives-ouvertes.fr/hal-01138901/document},
+    VIDEO={https://www.youtube.com/watch?v=6PlvyWQUQu8},
+    HAL_ID = {hal-01138901},
+    HAL_VERSION = {v1},
+    keywords={evolution, biology, plasticity},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @article{mengistu:hal-01330681,
+    TITLE = {{The Evolutionary Origins of Hierarchy}},
+    AUTHOR = {Mengistu, Henok and Huizinga, Joost and Mouret, Jean-Baptiste and Clune, Jeff},
+    JOURNAL = {{PLoS Computational Biology}},
+    PUBLISHER = {{Public Library of Science}},
+    VOLUME = {12},
+    NUMBER = {6},
+    YEAR = {2016},
+    DOI = {10.1371/journal.pcbi.1004829.s021},
+    URL = {https://hal.inria.fr/hal-01330681},
+    PDF = {https://hal.inria.fr/hal-01330681/document},
+    HAL_ID = {hal-01330681},
+    HAL_VERSION = {v1},
+    keywords={evolution, biology},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  @article{jolly:hal-01274231,
+    TITLE = {{Animal-to-robot social attachment: initial requisites in a gallinaceous bird}},
+    AUTHOR = {Jolly, Lucile and Pittet, Florent and Caudal, Jean-Pierre and Mouret, Jean-Baptiste and Houdelier, Cécilia and Lumineau, Sophie and de Margerie, Emmanuel},
+    JOURNAL = {{Bioinspiration and Biomimetics}},
+    PUBLISHER = {{IOP Publishing}},
+    VOLUME = {11},
+    NUMBER = {1},
+    PAGES = {016007},
+    YEAR = {2016},
+    DOI = {10.1088/1748-3190/11/1/016007},
+    URL = {https://hal-univ-rennes1.archives-ouvertes.fr/hal-01274231},
+    HAL_ID = {hal-01274231},
+    HAL_VERSION = {v1},
+    keywords={none},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @ARTICLE{2013ACLI2788,
+    CATEGORY = {ACLI},
+    AUTHOR = {Clune*, J. and Mouret, J.-B. and Lipson, H.},
+    TITLE = {The evolutionary origins of modularity},
+    YEAR = {2013},
+    PDF = {http://www.isir.upmc.fr/files/2013ACLI2788.pdf},
+    PAGES = {20122863},
+    JOURNAL = {Proceedings of the Royal Society B},
+    VOLUME = {280 (* J. Clune and J.-B. Mouret contributed equally to this work)},
+    video={https://www.youtube.com/watch?v=Rgq7Jzsw8vw},
+    DOI = {10.1098/rspb.2012.2863},
+    keywords={evolution, biology, modularity},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  
+  }
+  @ARTICLE{2013ACLI2965,
+    CATEGORY = {ACLI},
+    AUTHOR = {Tonelli, P. and Mouret, J.-B.},
+    TITLE = {On the Relationships between Generative Encodings, Regularity, and Learning Abilities when Evolving Plastic Artificial Neural Networks},
+    YEAR = {2013},
+    PDF = {http://www.isir.upmc.fr/files/2013ACLI2965.pdf},
+    PAGES = {e79138},
+    JOURNAL = {PLoS One},
+    VOLUME = {8},
+    NUMBER = {11},
+    MONTH = {November},
+    DOI = {10.1371/journal.pone.0079138},
+    keywords={evolution,biology,plasticity,encodings},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  @ARTICLE{2004ACLI1813,
+    CATEGORY = {ACLI},
+    AUTHOR = {Geraud, T. and Mouret, J.-B.},
+    TITLE = {Fast road network extraction in satellite images using mathematical morphology and Markov random fields},
+    YEAR = {2004},
+    PUBLISHER = {Hindawi Publishing Corp.},
+    PAGES = {2503--2514},
+    JOURNAL = {EURASIP Journal of Applied Signal Processing},
+    MONTH = {January},
+      X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1155/S1110865704409093},
+    keywords={image},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @ARTICLE{2007ACLI732,
+    CATEGORY = {ACLI},
+    AUTHOR = {de Margerie, E. and Mouret, J.-B. and Doncieux, S. and Meyer, J.-A.},
+    TITLE = {Artificial evolution of the morphology and kinematics in a flapping-wing mini UAV},
+    YEAR = {2007},
+    KEYWORD = {evolution, flapping-wing},
+    PDF = {http://www.isir.upmc.fr/files/2007ACLI732.pdf},
+    PAGES = {65--82},
+    JOURNAL = {Bioinspiration \& Biomimetics},
+    HTTP = {http://stacks.iop.org/1748-3190/2/65},
+    VOLUME = {2},
+    doi={10.1088/1748-3182/2/4/002},
+    keywords={evolution},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @ARTICLE{2008ACLI931,
+    CATEGORY = {ACLI},
+    AUTHOR = {Mouret, J.-B. and Doncieux, S.},
+    TITLE = {MENNAG: a modular, regular and hierarchical encoding for neural-networks based on attribute grammars},
+    YEAR = {2008},
+    PDF = {http://www.isir.upmc.fr/files/2008ACLI931.pdf},
+    PAGES = {187--207},
+    JOURNAL = {Evolutionary Intelligence},
+    HTTP = {http://www.springerlink.com/content/81288r5407701177/},
+    VOLUME = {1},
+    NUMBER = {3},
+    doi={10.1007/s12065-008-0015-7},
+    keywords={evolution, encodings},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @article{vassiliades2016scaling,
+    title={Using Centroidal {Voronoi} Tessellations to Scale Up the Multi-dimensional Archive of Phenotypic Elites Algorithm},  
+    author={Vassiliades, Vassilis and Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
+    journal={IEEE Transactions on Evolutionary Computation},
+    year={2017},
+    doi={10.1109/TEVC.2017.2735550}, 
+    src={https://github.com/resibots/vassiliades_2017_cvt_map_elites},
+    pdf={https://hal.inria.fr/hal-01630627/file/ieee_tec_voronoi_map_elites.pdf},
+    keywords={evolution,illumination},
+    X-END={xx}
+  }
+  
+  @article{morishima:hal-01630260,
+    TITLE = {{Discovery of a big void in Khufu's Pyramid by observation of cosmic-ray muons}},
+    AUTHOR = {Morishima, Kunihiro and Kuno, Mitsuaki and Nishio, Akira and Kitagawa, Nobuko and Manabe, Yuta and Moto, Masaki and Takasaki, Fumihiko and Fujii, Hirofumi and Satoh, Kotaro and Kodama, Hideyo and Hayashi, Kohei and Odaka, Shigeru and Procureur, S{\'e}bastien and Atti{\'e}, David and Bouteille, Simon and Calvet, Denis and Filosa, Christopher and Magnier, Patrick and Mandjavidze, Irakli and Riallot, Marc and Marini, Benoit and Gable, Pierre and Date, Yoshikatsu and Sugiura, Makiko and Elshayeb, Yasser and Elnady, Tamer and Ezzy, Mustapha and Guerriero, Emmanuel and Steiger, Vincent and Serikoff, Nicolas and Mouret, Jean-Baptiste and Charl{\`e}s, Bernard and Helal, Hany and Tayoubi, Mehdi},
+    URL = {https://hal.inria.fr/hal-01630260},
+    JOURNAL = {{Nature}},
+    PUBLISHER = {{Nature Publishing Group}},
+    PAGES = {1-13},
+    YEAR = {2017},
+    MONTH = Nov,
+    DOI = {10.1038/nature24647},
+    PDF = {https://hal.inria.fr/hal-01630260/file/ScanPyramids.pdf},
+    keywords={archeo},
+    HAL_ID = {hal-01630260},
+    HAL_VERSION = {v2},
+  }
+  
+  @article{rieffel:hal-01631648,
+    TITLE = {{Introduction to the Evolution of Physical Systems}},
+    AUTHOR = {Rieffel, John and Mouret, Jean-Baptiste and Bredeche, Nicolas and Haasdijk, Evert},
+    URL = {https://www.mitpressjournals.org/doi/abs/10.1162/ARTL_e_00232},
+    JOURNAL = {{Artificial Life}},
+    PUBLISHER = {{Massachusetts Institute of Technology Press (MIT Press)}},
+    VOLUME = {23},
+    NUMBER = {2},
+    PAGES = {119 - 123},
+    YEAR = {2017},
+    MONTH = May,
+    keywords={evolution},
+    DOI = {10.1162/ARTL\_e\_00232},
+    PDF = {https://hal.inria.fr/hal-01631648/file/introduction-evolution-physical%281%29.pdf},
+    HAL_ID = {hal-01631648},
+    HAL_VERSION = {v1},
+  }
+  
+  @article{chatzilygeroudis:hal-01654641,
+    TITLE = {{Reset-free Trial-and-Error Learning for Robot Damage Recovery}},
+    AUTHOR = {Chatzilygeroudis, Konstantinos and Vassiliades, Vassilis and Mouret, Jean-Baptiste},
+    JOURNAL = {{Robotics and Autonomous Systems}},
+    PUBLISHER = {{Elsevier}},
+    PAGES = {1-19},
+    YEAR = {2017},
+    DOI = {10.1016/j.robot.2017.11.010},
+    keywords={resilience, robotics},
+    PDF = {https://hal.inria.fr/hal-01654641/file/ral-2.pdf},
+    video={https://youtu.be/IqtyHFrb3BU},
+    src={https://github.com/resibots/chatzilygeroudis_2018_rte},
+    HAL_ID = {hal-01654641},
+    HAL_VERSION = {v2},
+  }
+  
+  @article{rieffel2017,
+    title={Adaptive and Resilient Soft Tensegrity Robots},
+    author={Rieffel*, John and Mouret*, Jean-Baptiste},
+    journal={Soft Robotics},
+    year={2018},
+    volume={(* J. Rieffel and J.-B. Mouret contributed equally to this work)},
+    video={https://www.youtube.com/watch?v=SuLQDhrk9tQ&feature=youtu.be},
+    data={TODO},
+    doi={https://doi.org/10.1089/soro.2017.0066},
+    keywords={resilience, learning, reality-gap},
+    HAL_ID={}
+  }
+  
+  
+  @article{gaier2018,
+    TITLE = {Data-Efficient Design Exploration through Surrogate-Assisted Illumination},
+    AUTHOR = {Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    JOURNAL = {Evolutionary Computation},
+    PUBLISHER = {{MIT Press}},
+    YEAR = {2018},
+    pdf={https://hal.inria.fr/hal-01817505/document},
+    DOI = {10.1162/evco\_a\_00231},
+    keywords={robotics, evolution},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  @article{cully2018limbo,
+      title={{Limbo: A Flexible High-performance Library for Gaussian Processes modeling and Data-Efficient Optimization}},
+      author={Cully, A. and Chatzilygeroudis, K. and Allocati, F.  and Mouret, J.-B.},
+      year={2018},
+      journal={{The Journal of Open Source Software}},
+      publisher={The Open Journal},
+      volume={3},
+      number={26},
+      pages={545},
+      doi={10.21105/joss.00545},
+      keywords={resilience, learning},
+      X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+  
+  }
+  @article{howard2019evolving,
+    title={Evolving embodied intelligence from materials to machines},
+    author={Howard, D and Eiben, Agoston E and Kennedy, Danielle Frances and Mouret, Jean-Baptiste and Valencia, Philip and Winkler, Dave},
+    journal={Nature Machine Intelligence},
+    volume={1},
+    number={1},
+    pages={12},
+    year={2019},
+    publisher={Nature Publishing Group},
+    pdf={https://arxiv.org/pdf/1901.05704},
+    keywords={evolution},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+  }
+  
+  
+  @article{chatzilygeroudis2018survey,
+    title={A survey on policy search algorithms for learning robot controllers in a handful of trials},
+    author={Chatzilygeroudis, Konstantinos and Vassiliades, Vassilis and Stulp, Freek and Calinon, Sylvain and Mouret, Jean-Baptiste},
+    journal={IEEE Transactions on Robotics},
+    year={2019},
+    pdf={https://arxiv.org/pdf/1807.02303},
+    keywords={resilience, learning}
+  }
+  
+  @article{lehman2018surprising,
+    title={The surprising creativity of digital evolution: A collection of anecdotes from the evolutionary computation and artificial life research communities},
+    author={Lehman, Joel and others},
+    journal={Artificial Life},
+    year={2020},
+    keywords={evolution, illumination},
+    pdf={https://arxiv.org/pdf/1803.03453},
+    X-INTERNATIONAL-AUDIENCE  = {yes},
+    X-EDITORIAL-BOARD = {yes},
+  }
+  
+  
+  % conferences
+  @inproceedings{mouret:hal-00473147,
+    TITLE = {{Overcoming the bootstrap problem in evolutionary robotics using behavioral diversity}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {{11th IEEE Congress on Evolutionary Computation (CEC'09)}},
+    ADDRESS = {Trondheim, Norway},
+    PUBLISHER = {{IEEE}},
+    PAGES = {1161--1168},
+    YEAR = {2009},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00473147/document},
+    HAL_ID = {hal-00473147},
+    HAL_VERSION = {v1},
+    doi={10.1109/CEC.2009.4983077},
+    keywords={evolution, diversity},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @inproceedings{koos:hal-00473153,
+    TITLE = {{Automatic system identification based on coevolution of models and tests}},
+    AUTHOR = {Koos, Sylvain and Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {{11th IEEE Congress on Evolutionary Computation (CEC'09)}},
+    ADDRESS = {Trondheim, Norway},
+    PUBLISHER = {{IEEE}},
+    PAGES = {560--567},
+    YEAR = {2009},
+    URL = {https://hal.archives-ouvertes.fr/hal-00473153},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00473153/document},
+    HAL_ID = {hal-00473153},
+    HAL_VERSION = {v1},
+    doi={10.1109/CEC.2009.4982995},
+    keywords={evolution, reality-gap},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @inproceedings{mouret:hal-00473132,
+    TITLE = {{Using Behavioral Exploration Objectives to Solve Deceptive Problems in Neuro-evolution}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {The 11th Annual conference on Genetic and evolutionary computation (GECCO'09)},
+    ADDRESS = {Montr{\'e}al, Canada},
+    PUBLISHER = {{ACM}},
+    PAGES = {627--634},
+    YEAR = {2009},
+    DOI = {10.1145/1569901.1569988},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00473132/document},
+    HAL_ID = {hal-00473132},
+    HAL_VERSION = {v1},
+    keywords={evolution, diversity},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    
+  }
+   %%
+  @inproceedings{mouret:hal-00473135,
+    TITLE = {{Evolving modular neural-networks through exaptation}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {{11th Congress on Evolutionary Computation (CEC'09)} \textbf{(Best Student Paper)}},
+    ADDRESS = {Trondheim, Norway},
+    PUBLISHER = {{IEEE}},
+    PAGES = {1570--1577},
+    YEAR = {2009},
+    URL = {https://hal.archives-ouvertes.fr/hal-00473135},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00473135/document},
+    HAL_ID = {hal-00473135},
+    HAL_VERSION = {v1},
+    doi = {10.1109/CEC.2009.4983129},
+    keywords={evolution, diversity},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  
+  @inproceedings{koos:hal-00633927,
+    TITLE = {{Crossing the Reality Gap in Evolutionary Robotics by Promoting Transferable Controllers}},
+    AUTHOR = {Koos, Sylvain and Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {The 12th Annual conference on Genetic and evolutionary computation {(GECCO'10)}},
+    ADDRESS = {United States},
+    PUBLISHER = {{ACM}},
+    PAGES = {119-126},
+    YEAR = {2010},
+    MONTH = Jul,
+    URL = {https://hal.archives-ouvertes.fr/hal-00633927},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00633927/document},
+    HAL_ID = {hal-00633927},
+    HAL_VERSION = {v1},
+    keywords={evolution, reality-gap},
+    doi={10.1145/1830483.1830505},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @inproceedings{pinville:hal-00633928,
+    TITLE = {{How to Promote Generalisation in Evolutionary Robotics: the ProGAb Approach}},
+    AUTHOR = {Pinville, Tony and Koos, Sylvain and Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {The 13th Annual conference on Genetic and evolutionary computation ({GECCO'11})},
+    ADDRESS = {Ireland},
+    PUBLISHER = {{ACM}},
+    PAGES = {259-266},
+    YEAR = {2011},
+    MONTH = Jul,
+    DOI = {10.1145/2001576.2001612},
+    URL = {https://hal.archives-ouvertes.fr/hal-00633928},
+    NOTE = {Consultable sur ACM Digital Library},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00633928/document},
+    HAL_ID = {hal-00633928},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    keywords={evolution}  
+  }
+  
+  @inproceedings{koos:hal-00633930,
+    TITLE = {{Online Discovery of Locomotion Modes for Wheel-Legged Hybrid Robots: a Transferability-based Approach}},
+    AUTHOR = {Koos, Sylvain and Mouret, Jean-Baptiste},
+    BOOKTITLE = {{14th International Conference on Climbing and Walking Robots (CLAWAR)}. \textbf{Highly Recommended Paper, category ``control of CLAWAR''}},
+    ADDRESS = {Paris, France},
+    PAGES = {70-77},
+    YEAR = {2011},
+    MONTH = Sep,
+    URL = {https://hal.archives-ouvertes.fr/hal-00633930},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00633930/document},
+    doi={10.1142/9789814374286_0008},
+    keywords={evolution, resilience, learning, reality-gap},
+    HAL_ID = {hal-00633930},
+    video={https://www.youtube.com/watch?v=DVjhA6QKxXo https://www.youtube.com/watch?v=6GcQvyx9hwo https://www.youtube.com/watch?v=sIl75Pb_Pnw},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {no},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  
+  }
+  
+  @inproceedings{terekhov:hal-00687630,
+    TITLE = {{Stochastic optimization of a chain sliding mode controller for the mobile robot maneuvering}},
+    AUTHOR = {Terekhov, Alexander and Mouret, Jean-Baptiste and Grand, Christophe},
+    BOOKTITLE = {{International Conference on Intelligent Robots and Systems (IROS)}},
+    ADDRESS = {San Francisco, United States},
+    PAGES = {4360-4365},
+    YEAR = {2011},
+    publisher={IEEE},
+    keywords={learning, robotics},
+    DOI = {10.1109/IROS.2011.6094956},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687630},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687630/document},
+    HAL_ID = {hal-00687630},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @inproceedings{mouret:hal-00687639,
+    TITLE = {{Importing the Computational Neuroscience Toolbox into Neuro-Evolution---Application to Basal Ganglia}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane and Girard, Beno{\^i}t},
+    BOOKTITLE = {The 12th Annual conference on Genetic and evolutionary computation {(GECCO'10)}},
+    ADDRESS = {United States},
+    publisher={{ACM}},
+    PAGES = {587-594},
+    YEAR = {2010},
+    DOI = {10.1145/1830483.1830592},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687639},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687639/document},
+    keywords={evolution, biology, encodings},
+    HAL_ID = {hal-00687639},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  @inproceedings{doncieux:hal-00687641,
+    TITLE = {{Behavioral diversity measures for Evolutionary Robotics}},
+    AUTHOR = {Doncieux, St{\'e}phane and Mouret, Jean-Baptiste},
+    BOOKTITLE = {12th IEEE Congress on Evolutionary Computation {(CEC'10)}},
+    publisher={{IEEE}},
+    ADDRESS = {Spain},
+    PAGES = {1303-1310},
+    YEAR = {2010},
+    DOI = {10.1109/CEC.2010.5586100WCCI},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687641},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687641/document},
+    keywords={evolution, diversity},
+    HAL_ID = {hal-00687641},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @inproceedings{tonelli:hal-00687621,
+    TITLE = {{On the Relationships between Synaptic Plasticity and Generative Systems.}},
+    AUTHOR = {Tonelli, Paul and Mouret, Jean-Baptiste},
+    BOOKTITLE = {The 13th Annual conference on Genetic and evolutionary computation {(GECCO'11)}},
+    PAGES = {1531-1538},
+    YEAR = {2011},
+    publisher={{ACM}},
+    DOI = {10.1145/2001576.2001782},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687621},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687621/document},
+    keyworks={evolution, plasticity,encodings},
+    HAL_ID = {hal-00687621},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  
+   @inproceedings{mouret:hal-00687633,
+    TITLE = {Sferes$_{v2}$: Evolvin' in the Multi-Core World},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {12th IEEE Congress on Evolutionary Computation ({CEC'2010})},
+    ADDRESS = {France},
+    PAGES = {1-8},
+    YEAR = {2010},
+    DOI = {10.1109/CEC.2010.5586158},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687633},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687633/document},
+    HAL_ID = {hal-00687633},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no}
+  }
+  
+  @inproceedings{terekhov:hal-00687644,
+    TITLE = {{Stochastic optimization of a neural network-based controller for aggressive maneuvers on loose surfaces}},
+    AUTHOR = {Terekhov, Alexander and Mouret, Jean-Baptiste and Grand, Christophe},
+    BOOKTITLE = {{International Conference on Intelligent Robots and Systems (IROS)}},
+    ADDRESS = {Taiwan},
+    PAGES = {4782-4787},
+    YEAR = {2010},
+    publisher={IEEE},
+    DOI = {10.1109/IROS.2010.5651397},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687644},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687644/document},
+    HAL_ID = {hal-00687644},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    keywords={robotics, learning, evolution}
+  }
+  %%
+  @inproceedings{mouret:hal-00687647,
+    TITLE = {{Incremental Evolution of Animats' Behaviors as a Multi-objective Optimization}},
+    AUTHOR = {Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
+    BOOKTITLE = {{From Animals to Animats 10}},
+    ADDRESS = {Japan},
+    PAGES = {210-219},
+    YEAR = {2008},
+    DOI = {10.1007/978-3-540-69134-1\_21},
+    URL = {https://hal.archives-ouvertes.fr/hal-00687647},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00687647/document},
+    HAL_ID = {hal-00687647},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    keywords={evolution}
+  }
+  @inproceedings{cully:hal-00841958,
+    TITLE = {{Behavioral Repertoire Learning in Robotics}},
+    AUTHOR = {Cully, Antoine and Mouret, Jean-Baptiste},
+    BOOKTITLE = {The 15th Annual conference on Genetic and evolutionary computation {(GECCO'13)}},
+    ADDRESS = {Amsterdam, Netherlands},
+    publisher={{ACM}},
+    PAGES = {175-182},
+    YEAR = {2013},
+    video={https://www.youtube.com/watch?v=2aTIL_c-qwA},
+    MONTH = Jul,
+    URL = {https://hal.archives-ouvertes.fr/hal-00841958},
+    PDF = {https://hal.archives-ouvertes.fr/hal-00841958/document},
+    doi={10.1145/2463372.2463399},
+    keywords={evolution, robotics,  diversity},
+    HAL_ID = {hal-00841958},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+   %%
+  
+  %%
+  @inproceedings{tarapore:hal-01302658,
+    TITLE = {{How Do Different Encodings Influence the Performance of the MAP-Elites Algorithm?}},
+    AUTHOR = {Tarapore, Danesh and Clune, Jeff and Cully, Antoine and Mouret, Jean-Baptiste},
+    BOOKTITLE = {{The 18th Annual conference on Genetic and evolutionary computation (GECCO)}},
+    YEAR = {2016},
+    publisher={{ACM}},
+    keywords={illumination, evolution, resilience, robotics, encodings},
+    DOI = {10.1145/2908812.2908875},
+    URL = {https://hal.inria.fr/hal-01302658},
+    PDF = {https://hal.inria.fr/hal-01302658/document},
+    SRC={https://github.com/resibots/tarapore_2016_gecco},
+    HAL_ID = {hal-01302658},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  %%
+  @inproceedings{huizinga:hal-01402502,
+    TITLE = {{Does Aligning Phenotypic and Genotypic Modularity Improve the Evolution of Neural Networks?}},
+    AUTHOR = {Huizinga, Joost and Mouret, Jean-Baptiste and Clune, Jeff},
+    BOOKTITLE = {{The 18th Annual conference on Genetic and evolutionary computation ({GECCO'14})}},
+    ADDRESS = {Denver, France},
+    PAGES = {125 - 132},
+    YEAR = {2016},
+    publisher={ACM},
+    DOI = {10.1145/2908812.2908836},
+    URL = {https://hal.inria.fr/hal-01402502},
+    PDF = {https://hal.inria.fr/hal-01402502/document},
+    src={http://www.evolvingai.org/files/source_code_modular_alignment.zip},
+    HAL_ID = {hal-01402502},
+    HAL_VERSION = {v1},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1145/2908812.2908836},
+    keywords={evolution}
+  }
+  
+  @inproceedings{gaier2017aaia,
+    title={Aerodynamic Design Exploration through Surrogate-Assisted Illumination},
+    author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    booktitle={18th {AIAA/ISSMO} Multidisciplinary Analysis and Optimization Conference (\textbf{best student paper})},
+    year={2017},
+    doi={10.2514/6.2017-3330},
+    keywords={evolution, design,illumination},
+    pdf={https://hal.inria.fr/hal-01518786/document},
+    X-PROCEEDINGS = {no},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  
+  
+  @INPROCEEDINGS{2014ACTI3079,
+    CATEGORY = {ACTI},
+    AUTHOR = {Jehanno, J.-M. and Cully, A. and Grand, C. and Mouret, J.-B.},
+    TITLE = {Design of a Wheel-Legged Hexapod Robot for Creative Adaptation},
+    YEAR = {2014},
+    PDF = {http://www.isir.upmc.fr/files/2014ACTI3079.pdf},
+    BOOKTITLE = {17th International Conference on Climbing and Walking Robots (CLAWAR)},
+    keywords={robotics, resilience},
+    PAGES = {267-276},
+    video={https://www.youtube.com/watch?v=uIPErWYq1TI},
+    doi={10.1142/9789814623353_0032},
+    X-PROCEEDINGS = {yes},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  
+  @INPROCEEDINGS{2014ACTI3119,
+    CATEGORY = {ACTI},
+    AUTHOR = {Tarapore, D. and Mouret, J.-B.},
+    TITLE = {Comparing the evolvability of generative encoding schemes},
+    YEAR = {2014},
+    PDF = {http://www.isir.upmc.fr/files/2014ACTI3119.pdf},
+    BOOKTITLE = {Artificial Life 14: Proceedings of the Fourteenth International Conference on the Synthesis and Simulation of Living Systems},
+    PUBLISHER = {MIT Press},
+    keywords={evolution, encodings},
+    PAGES = {55-62},
+    DOI = {10.7551/978-0-262-32621-6-ch011},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  
+  @INPROCEEDINGS{2014ACTI3120,
+    CATEGORY = {ACTI},
+    AUTHOR = {Huizinga, J. and Mouret, J.-B. and Clune, J.},
+    TITLE = {Evolving Neural Networks That Are Both Modular and Regular: HyperNeat Plus the Connection Cost Technique},
+    YEAR = {2014},
+    PDF = {https://hal.archives-ouvertes.fr/hal-01300699/document},
+    BOOKTITLE = {The 16th Annual conference on Genetic and evolutionary computation ({GECCO'14})},
+    publisher={{ACM}},
+    PAGES = {1-8},
+    DOI={10.1145/2576768.2598232},
+    keywords={evolution, encodings},
+    VIDEO={https://www.youtube.com/watch?v=t15wUkCXuxQ},
+    SRC={http://www.evolvingai.org/files/sferes_modularity_share.zip},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  
+  @INPROCEEDINGS{2013ACTI2839,
+    CATEGORY = {ACTI},
+    AUTHOR = {Doncieux, S. and Mouret, J.-B.},
+    TITLE = {Behavioral Diversity with Multiple Behavioral Distances},
+    YEAR = {2013},
+    PDF = {http://www.isir.upmc.fr/files/2013ACTI2839.pdf},
+    BOOKTITLE = {15th IEEE Congress on Evolutionary Computation (CEC'13)},
+    PAGES = {1-8},
+    publisher={{IEEE}},
+    keywords={evolution, diversity},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1109/CEC.2013.6557731},
+  }
+  
+  
+  @INPROCEEDINGS{2013ACTI2937,
+    CATEGORY = {ACTI},
+    AUTHOR = {Oliveira, M. A. and Doncieux, S. and Mouret, J.-B. and Peixoto Santos, C.},
+    TITLE = {Optimization of Humanoid Walking Controller: Crossing the Reality Gap},
+    YEAR = {2013},
+    PDF = {http://www.isir.upmc.fr/files/2013ACTI2937.pdf},
+    BOOKTITLE = {Proceedings of IEEE Humanoids},
+    PAGES = {1-7},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    keywords={evolution, reality-gap, robotics, resilience},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1109/HUMANOIDS.2013.7029963},
+  }
+  
+  @INPROCEEDINGS{2011ACTI1962,
+    CATEGORY = {ACTI},
+    AUTHOR = {Tonelli, P. and Mouret, J.-B.},
+    TITLE = {Using a Map-Based Encoding to Evolve Plastic Neural Networks},
+    YEAR = {2011},
+    PDF = {http://www.isir.upmc.fr/files/2011ACTI1962.pdf},
+    BOOKTITLE = {Proceedings of IEEE Symposium Series on Computational Intelligence},
+    PAGES = {9-16},
+    DOI = {10.1109/EAIS.2011.5945909},
+    keywords={evolution,encodings},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+  }
+  
+  @INPROCEEDINGS{2009ACTI1812,
+    CATEGORY = {ACTI},
+    AUTHOR = {Tonelli, P. and Mouret, J.-B. and Doncieux, S.},
+    TITLE = {Influence of Promoter Length on Network Convergence in GRN-based Evolutionary Algorithms},
+    YEAR = {2009},
+    PDF = {http://www.isir.upmc.fr/files/2009ACTI1812.pdf},
+    BOOKTITLE = {Proceedings of The 10th European Conference on Artificial Life (ECAL)},
+    PUBLISHER = {Springer},
+    PAGES = {302-309},
+    keywords={evolution, biology},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1007/978-3-642-21314-4_38},
+  }
+  
+  @INPROCEEDINGS{2008ACTI937,
+    CATEGORY = {ACTI},
+    AUTHOR = {Grand, C. and Martinelli, P. and Mouret, J.-B. and Doncieux, S.},
+    TITLE = {Flapping-Wing Mechanism for a bird-Sized UAVS: Design, Modeling and Control},
+    YEAR = {2008},
+    PDF = {http://www.isir.upmc.fr/files/2008ACTI937.pdf},
+    BOOKTITLE = {Proceedings of ARK'08 : the 11th International Symposium of Advances in robot kinematics},
+    ADDRESS = {France},
+    EDITOR = {Lenarcic, J. and Wenger, P.},
+    PUBLISHER = {Springer},
+    PAGES = {127-136},
+    MONTH = {June},
+    keywords={robotics, flapping-wing},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1007/978-1-4020-8600-7_14},
+  }
+  
+  @INPROCEEDINGS{2006ACTI462,
+    CATEGORY = {ACTI},
+    AUTHOR = {Mouret, J.-B. and Doncieux, S. and Meyer, J.-A.},
+    TITLE = {Incremental Evolution of Target-Following Neuro-controllers for Flapping-Wing Animats},
+    YEAR = {2006},
+    KEYWORD = {Evolution},
+    PDF = {http://www.isir.upmc.fr/files/2006ACTI462.pdf},
+    BOOKTITLE = {From Animals to Animats: Proceedings of the 9th International Conference on the Simulation of Adaptive Behavior (SAB)},
+    PAGES = {606--618},
+    PROJECT = {Robur},
+    video={https://www.youtube.com/watch?v=BfY4jRtcE4c},
+    keywords={evolution, flapping-wing},
+    X-INTERNATIONAL-AUDIENCE = {yes},
+    X-EDITORIAL-BOARD = {yes},
+    X-INVITED-CONFERENCE = {no},
+    X-SCIENTIFIC-POPULARIZATION = {no},
+    doi={10.1007/11840541_50},
+  }
+  
+  @inproceedings{gaier:hal-01518698,
+    TITLE = {{Data-Efficient Exploration, Optimization, and Modeling of Diverse Designs through Surrogate-Assisted Illumination}},
+    AUTHOR = {Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    BOOKTITLE = {{Genetic and Evolutionary Computation Conference (GECCO 2017)}},
+    ADDRESS = {Berlin, Germany},
+    YEAR = {2017},
+    KEYWORDS = {MAP-Elites, Surrogate Modeling,Aerodynamics, evolution, design,illumination},
+    PDF = {https://hal.inria.fr/hal-01518698/file/sail2017.pdf},
+    HAL_ID = {hal-01518698},
+    HAL_VERSION = {v1},
+  }
+  
+  @inproceedings{chatzilygeroudis:hal-01576683,
+    TITLE = {{Black-Box Data-efficient Policy Search for Robotics}},
+    AUTHOR = {Chatzilygeroudis, Konstantinos and Rama, Roberto and Kaushik, Rituraj and Goepp, Dorian and Vassiliades, Vassilis and Mouret, Jean-Baptiste},
+    URL = {https://hal.inria.fr/hal-01576683},
+    BOOKTITLE = {{IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)}},
+    ADDRESS = {Vancouver, Canada},
+    YEAR = {2017},
+    video={https://www.youtube.com/watch?v=kTEyYiIFGPM},
+    src={https://github.com/resibots/blackdrops},
+    MONTH = Sep,
+    KEYWORDS = {Data-Efficient Learning, learning, robotics, resilience},
+    PDF = {https://hal.inria.fr/hal-01576683/file/medrops-final.pdf},
+    HAL_ID = {hal-01576683},
+    HAL_VERSION = {v1},
+  }
+  
+  
+  @inproceedings{spitz:hal-01569948,
+    TITLE = {{Trial-and-Error Learning of Repulsors for Humanoid QP-based Whole-Body Control}},
+    AUTHOR = {Spitz, Jonathan and Bouyarmane, Karim and Ivaldi, Serena and Mouret, Jean-Baptiste},
+    YEAR = {2017},
+    URL = {https://hal.archives-ouvertes.fr/hal-01569948},
+    PDF = {https://hal.archives-ouvertes.fr/hal-01569948/file/repulsors.pdf},
+    booktitle={Proc. of IEEE Humanoids},
+    adress={Birmingham, UK},
+    video={https://www.youtube.com/watch?v=InQ0YUBmuNw},
+    KEYWORDS = {Data-Efficient Learning, learning, robotics, resilience, humanoid},
+    HAL_VERSION = {v1},
+  }
+  
+  @inproceedings{paul:hal-01644063,
+    TITLE = {{Alternating Optimisation and Quadrature for Robust Control}},
+    AUTHOR = {Paul, Supratik and Chatzilygeroudis, Konstantinos and Ciosek, Kamil and Mouret, Jean-Baptiste and Osborne, Michael A and Whiteson, Shimon},
+    URL = {https://hal.inria.fr/hal-01644063},
+    BOOKTITLE = {{AAAI 2018 - The Thirty-Second AAAI Conference on Artificial Intelligence}},
+    ADDRESS = {New Orleans, United States},
+    YEAR = {2018},
+    MONTH = Feb,
+    PDF = {https://hal.inria.fr/hal-01644063/file/ALOQ_AAAI18_final.pdf},
+    HAL_ID = {hal-01644063},
+    keywords={resilience, robotics},
+    HAL_VERSION = {v1},
+  }
+  
+  
+  
+  @inproceedings{pautrat2017bayesian,
+    title={Bayesian Optimization with Automatic Prior Selection for Data-Efficient Direct Policy Search},
+    author={Pautrat, R\'emi and Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
+    booktitle={IEEE International Conference on Robotics and Automation (ICRA)},
+    year={2018},
+    video={https://www.youtube.com/watch?v=iiVaV-U6Kqo},
+    PDF={https://arxiv.org/pdf/1709.06919.pdf},
+    keywords={resilience, robotics},
+    END={}
+  }
+  
+  @inproceedings{chatzilygeroudis2017using,
+    title={Using Parameterized Black-Box Priors to Scale Up Model-Based Policy Search for Robotics},
+    author={Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
+    booktitle={IEEE International Conference on Robotics and Automation (ICRA)},
+    year={2018},
+    keywords={resilience, robotics},
+    url={https://arxiv.org/abs/1709.06917},
+    video={https://www.youtube.com/watch?v=_MZYDhfWeLc},
+    PDF={https://arxiv.org/pdf/1709.06917.pdf},
+    END={}
+  }
+  
+  
+  @inproceedings{vassiliades:hal-01764739,
+    TITLE = {{Discovering the Elite Hypervolume by Leveraging Interspecies Correlation}},
+    AUTHOR = {Vassiliades, Vassilis and Mouret, Jean-Baptiste},
+    BOOKTITLE = {Genetic and Evolutionary Computation Conference ({GECCO})},
+    ADDRESS = {Kyoto, Japan},
+    YEAR = {2018},
+    MONTH = Jul,
+    DOI = {10.1145/3205455.3205602},
+    PDF = {https://arxiv.org/pdf/1804.03906.pdf},
+    KEYWORDS = {illumination, MAP-Elites, quality diversity, diversity, evolution},
+    HAL_ID = {hal-01764739},
+    HAL_VERSION = {v1},
+  }
+  
+  @inproceedings{gaier:hal-01768248,
+    TITLE = {{Data-efficient Neuroevolution with Kernel-Based Surrogate Models}},
+    AUTHOR = {Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
+    URL = {https://arxiv.org/abs/1804.05364},
+    BOOKTITLE = {Genetic and Evolutionary Computation Conference ({GECCO})},
+    ADDRESS = {Kyoto, Japan},
+    YEAR = {2018},
+    DOI = {10.1145/3205455.3205510},
+    KEYWORDS = {NEAT ; Surrogate Modeling ; Neuroevolution, evolution},
+    PDF = {https://hal.inria.fr/hal-01768248/file/1804.05364.pdf},
+    keywords={robotics, encodings},
+    HAL_ID = {hal-01768248},
+    HAL_VERSION = {v1},
+  }
+  
+  
+  @inproceedings{multi-dex2018,
+    TITLE = {Multi-objective Model-based Policy Search for Data-efficient Learning with Sparse Rewards},
+    AUTHOR = {Kaushik, Rituraj and Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
+    URL = {https://arxiv.org/abs/1806.09351},
+    PDF = {https://hal.inria.fr/hal-01884294/document},
+    BOOKTITLE = {Conference on Robot Learning (CoRL)},
+    ADDRESS = {Zurich, Switzerland},
+    YEAR = {2018},
+    keywords={robotics, resilience, diversity},
+  }
+  
+  
+  @inproceedings{penco2018robust,
+    title={Robust Real-time Whole-Body Motion Retargeting from Human to Humanoid},
+    author={Penco, L and Cl{\'e}ment, Brice and Modugno, V and Hoffman, E Mingo and Nava, Gabriele and Pucci, Daniele and Tsagarakis, Nikos G and Mouret, J-B and Ivaldi, Serena},
+    booktitle={IEEE-RAS 18th International Conference on Humanoid Robots (Humanoids)},
+    pages={425--432},
+    year={2018},
+    organization={IEEE},
+    pdf={https://hal.archives-ouvertes.fr/hal-01895145/file/_LARGE__bf_Robust_Real_time_Whole_Body_Motion_Retargeting____from_Human_to_Humanoid.pdf},
+    url={https://ieeexplore.ieee.org/abstract/document/8624943/}
+  }
+  
+  @inproceedings{gomes2019humanoids,
+    title={Humanoid Whole-Body Movement Optimization from Retargeted Human Motions},
+    author={Gomes, Waldez and Radhakrishnan, Vishnu and Penco, Luigi and Modugno, Valerio and Mouret, Jean-Baptiste and Ivaldi, Serena},
+    year={2019},
+    booktitle={IEEE-RAS International Conference on Humanoid Robots},
+    keywords={robotics},
+    url={https://hal.archives-ouvertes.fr/hal-02290473/},
+    pdf={https://hal.archives-ouvertes.fr/hal-02290473/document}
+  }
+  
+  @article{cully2017quality,
+    title={Quality and diversity optimization: A unifying modular framework},
+    author={Cully, Antoine and Demiris, Yiannis},
+    journal={IEEE Transactions on Evolutionary Computation},
+    volume={22},
+    number={2},
+    pages={245--259},
+    year={2017},
+    publisher={IEEE}
+  }
+  
+  @article{pugh2016quality,
     title={Quality diversity: A new frontier for evolutionary computation},
     author={Pugh, Justin K and Soros, Lisa B and Stanley, Kenneth O},
     journal={Frontiers in Robotics and AI},
@@ -645,363 +1494,197 @@ CarRacing-v0
     year={2016},
     publisher={Frontiers}
   }
-
-  @article{qd2,
-    title={Quality and diversity optimization: A unifying modular framework},
-    author={Cully, A and Demiris, Y},
-    journal={IEEE Trans. on Evolutionary Computation},
-    year={2018},
+  
+  
+  @inproceedings{dacosta2008adaptive,
+    title={Adaptive operator selection with dynamic multi-armed bandits},
+    author={DaCosta, Luis and Fialho, Alvaro and Schoenauer, Marc and Sebag, Mich{\`e}le},
+    booktitle={Proceedings of the 10th annual conference on Genetic and Evolutionary Computation (GECCO 2008)},
+    pages={913--920},
+    year={2008}
+  }
+  
+  
+  @article{shahriari2015taking,
+    title={Taking the human out of the loop: A review of Bayesian optimization},
+    author={Shahriari, Bobak and Swersky, Kevin and Wang, Ziyu and Adams, Ryan P and De Freitas, Nando},
+    journal={Proceedings of the IEEE},
+    volume={104},
+    number={1},
+    pages={148--175},
+    year={2015},
     publisher={IEEE}
   }
-
-  % nature map-elites/IT&E
-  @article{cully2015robots,
-    title={Robots that can adapt like animals},
-    author={Cully, A and Clune, J and Tarapore, D and Mouret, J-B},
-    journal={Nature},
-    year={2015},
-    publisher={Nature Publishing Group}
+  
+  @article{auer2002finite,
+    title={Finite-time analysis of the multiarmed bandit problem},
+    author={Auer, Peter and Cesa-Bianchi, Nicolo and Fischer, Paul},
+    journal={Machine learning},
+    volume={47},
+    number={2-3},
+    pages={235--256},
+    year={2002},
+    publisher={Springer}
   }
-
-  % QD-picbreeder
-  @inproceedings{gaier2019quality,
-  title={Are quality diversity algorithms better at generating stepping stones than objective-based search?},
-  author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
-  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference Companion},
-  pages={115--116},
-  year={2019}
+  
+  
+  @article{audibert2009exploration,
+    title={Exploration--exploitation tradeoff using variance estimates in multi-armed bandits},
+    author={Audibert, Jean-Yves and Munos, R{\'e}mi and Szepesv{\'a}ri, Csaba},
+    journal={Theoretical Computer Science},
+    volume={410},
+    number={19},
+    pages={1876--1902},
+    year={2009},
+    publisher={Elsevier}
   }
-
-  % MAP-Elites in aerodynamics
-  @inproceedings{gaier2017aerodynamic,
-    title={Aerodynamic design exploration through surrogate-assisted illumination},
-    author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
-    booktitle={18th AIAA/ISSMO Multidisciplinary Analysis and Optimization Conference},
-    pages={3330},
-    year={2017}
+  
+  @inproceedings{yu2019meta,
+    title={Meta-world: A benchmark and evaluation for multi-task and meta reinforcement learning},
+    author={Yu, Tianhe and Quillen, Deirdre and He, Zhanpeng and Julian, Ryan and Hausman, Karol and Finn, Chelsea and Levine, Sergey},
+    booktitle={Proc. of CoRL},
+    year={2019}
   }
-
-  % SAIL - ECJ 
-  @article{gaier2018data,
-    title={Data-efficient design exploration through surrogate-assisted illumination},
-    author={Gaier, Adam and Asteroth, Alexander and Mouret, Jean-Baptiste},
-    journal={Evolutionary computation},
-    volume={26},
+  
+  
+  @article{gupta2015multifactorial,
+    title={Multifactorial evolution: toward evolutionary multitasking},
+    author={Gupta, Abhishek and Ong, Yew-Soon and Feng, Liang},
+    journal={IEEE Transactions on Evolutionary Computation},
+    volume={20},
     number={3},
-    pages={381--410},
-    year={2018},
+    pages={343--357},
+    year={2015},
+    publisher={IEEE}
+  }
+  
+  
+  @article{hansen2003reducing,
+    title={Reducing the time complexity of the derandomized evolution strategy with covariance matrix adaptation (CMA-ES)},
+    author={Hansen, Nikolaus and M{\"u}ller, Sibylle D and Koumoutsakos, Petros},
+    journal={Evolutionary computation},
+    volume={11},
+    number={1},
+    pages={1--18},
+    year={2003},
     publisher={MIT Press}
   }
-
-
-  % MAP-Elites in hearthstone - sliding boundaries
-  @inproceedings{fontaine2019mapping,
-  title={Mapping hearthstone deck spaces through MAP-elites with sliding boundaries},
-  author={Fontaine, Matthew C and Lee, Scott and Soros, LB and De Mesentier Silva, Fernando and Togelius, Julian and Hoover, Amy K},
-  booktitle={Proceedings of The Genetic and Evolutionary Computation Conference},
-  pages={161--169},
-  year={2019}
+  
+  @ARTICLE{kaushik2020,  
+  AUTHOR={Kaushik, Rituraj and Desreumaux, Pierre and Mouret, Jean-Baptiste},   	 
+  TITLE={Adaptive Prior Selection for Repertoire-Based Online Adaptation in Robotics},      
+  JOURNAL={Frontiers in Robotics and AI},      
+  VOLUME={6},      
+  PAGES={151},     
+  YEAR={2020},      
+  DOI={10.3389/frobt.2019.00151},      
+  ISSN={2296-9144}
   }
-
-  % cma-me
-  @article{fontaine2019covariance,
-  title={Covariance Matrix Adaptation for the Rapid Illumination of Behavior Space},
-  author={Fontaine, Matthew C and Togelius, Julian and Nikolaidis, Stefanos and Hoover, Amy K},
-  journal={arXiv preprint arXiv:1912.02400},
-  year={2019}
+  
+  @article{duarte2017evolution,
+    title={Evolution of repertoire-based control for robots with complex locomotor systems},
+    author={Duarte, Miguel and Gomes, Jorge and Oliveira, Sancho Moura and Christensen, Anders Lyhne},
+    journal={IEEE Transactions on Evolutionary Computation},
+    volume={22},
+    number={2},
+    pages={314--328},
+    year={2017},
+    publisher={IEEE}
   }
-
-  % aurora
-  @inproceedings{cully2019autonomous,
-  title={Autonomous skill discovery with quality-diversity and unsupervised descriptors},
-  author={Cully, Antoine},
-  booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-  pages={81--89},
-  year={2019}
-}
-
-  % Line mutation
-  @inproceedings{me_linemut,
-    title={Discovering the elite hypervolume by leveraging interspecies correlation},
-    author={Vassiliades, Vassilis and Mouret, Jean-Baptiste},
-    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference},
-    pages={149--156},
+  
+  @article{coumans2016pybullet,
+    title={Pybullet, a python module for physics simulation for games, robotics and machine learning},
+    author={Coumans, Erwin and Bai, Yunfei},
+    journal={GitHub repository},
+    year={2016}
+  }
+  
+  @inproceedings{hansen2010comparing,
+    title={Comparing results of 31 algorithms from the black-box optimization benchmarking BBOB-2009},
+    author={Hansen, Nikolaus and Auger, Anne and Ros, Raymond and Finck, Steffen and Po
+      {\v{s}}{\'\i}k, Petr},
+    booktitle={Proceedings of the 12th annual conference companion on Genetic and evolutionary computation (GECCO 2009)},
+    pages={1689--1696},
+    year={2010}
+  }
+  
+  @inproceedings{hashimoto2018analysis,
+    title={Analysis of evolutionary multi-tasking as an island model},
+    author={Hashimoto, Ryuichi and Ishibuchi, Hisao and Masuyama, Naoki and Nojima, Yusuke},
+    booktitle={Proceedings of the Genetic and Evolutionary Computation Conference Companion (GECCO 2018)},
+    pages={1894--1897},
     year={2018}
   }
-
-  % CVT
-  @article{cvt,
-  title={Using centroidal voronoi tessellations to scale up the multidimensional archive of phenotypic elites algorithm},
-  author={Vassiliades, Vassilis and Chatzilygeroudis, Konstantinos and Mouret, Jean-Baptiste},
-  journal={IEEE Transactions on Evolutionary Computation},
-  volume={22},
-  number={4},
-  pages={623--630},
-  year={2017},
-  publisher={IEEE}
+  
+  @article{da2017evolutionary,
+    title={Evolutionary multitasking for single-objective continuous optimization: Benchmark problems, performance metric, and baseline results},
+    author={Da, Bingshui and Ong, Yew-Soon and Feng, Liang and Qin, A Kai and Gupta, Abhishek and Zhu, Zexuan and Ting, Chuan-Kang and Tang, Ke and Yao, Xin},
+    journal={arXiv preprint arXiv:1706.03470},
+    year={2017}
   }
-
-%-------------------------------------------%
-% MOO 
-
-  % MOO produces variety with conflicting objectives
-  @article{deb2003unveiling,
-  title={Unveiling innovative design principles by means of multiple conflicting objectives},
-  author={Deb, Kalyanmoy},
-  journal={Engineering Optimization},
-  volume={35},
-  number={5},
-  pages={445--470},
-  year={2003},
-  publisher={Taylor \& Francis}
-  } 
-
-%-------------------------------------------%
-% Generative Models
-
-  @article{ae,
-    title={Reducing the dimensionality of data with neural networks},
-    author={Hinton, G and Salakhutdinov, R},
+  
+  
+  @article{fabisch2014active,
+    title={Active contextual policy search},
+    author={Fabisch, Alexander and Metzen, Jan Hendrik},
+    journal={The Journal of Machine Learning Research},
+    volume={15},
+    number={1},
+    pages={3371--3399},
+    year={2014},
+    publisher={JMLR. org}
+  }
+  
+  
+  @article{fruitfly,
+    title={The genome sequence of Drosophila melanogaster},
+    author={Adams, Mark D and Celniker, Susan E and Holt, Robert A and Evans, Cheryl A and Gocayne, Jeannine D and Amanatides, Peter G and Scherer, Steven E and Li, Peter W and Hoskins, Roger A and Galle, Richard F and others},
     journal={Science},
-    year={2006},
+    volume={287},
+    number={5461},
+    pages={2185--2195},
+    year={2000},
     publisher={American Association for the Advancement of Science}
   }
-
-  @article{vae,
-    title={Auto-encoding variational bayes},
-    author={Kingma, Diederik P and Welling, Max},
-    journal={arXiv preprint arXiv:1312.6114},
-    year={2013}
+  
+  @article{sareni1998fitness,
+    title={Fitness sharing and niching methods revisited},
+    author={Sareni, Bruno and Krahenbuhl, Laurent},
+    journal={IEEE transactions on Evolutionary Computation},
+    volume={2},
+    number={3},
+    pages={97--106},
+    year={1998},
+    publisher={IEEE}
   }
-
-  @inproceedings{gan,
-    title={Generative adversarial nets},
-    author={Goodfellow, Ian and Pouget-Abadie, Jean and Mirza, Mehdi and Xu, Bing and Warde-Farley, David and Ozair, Sherjil and Courville, Aaron and Bengio, Yoshua},
-    booktitle={Advances in neural information processing systems},
-    pages={2672--2680},
-    year={2014}
-  }
-
-  % KL Divergance
-  @article{kldivergance,
-    title={On information and sufficiency},
-    author={Kullback, Solomon and Leibler, Richard A},
-    journal={The annals of mathematical statistics},
-    volume={22},
-    number={1},
-    pages={79--86},
-    year={1951},
-    publisher={JSTOR}
-  }
-
-  % beta-VAE 
-  @article{higgins2017beta,
-  title={beta-VAE: Learning Basic Visual Concepts with a Constrained Variational Framework.},
-  author={Higgins, Irina and Matthey, Loic and Pal, Arka and Burgess, Christopher and Glorot, Xavier and Botvinick, Matthew and Mohamed, Shakir and Lerchner, Alexander},
-  journal={International Conference on Machine Learning},
-  volume={2},
-  number={5},
-  pages={6},
-  year={2017}
-  }
-
-  % beta-VAE b
-  @article{burgess2018understanding,
-  title={Understanding disentangling in beta-VAE},
-  author={Burgess, Christopher P and Higgins, Irina and Pal, Arka and Matthey, Loic and Watters, Nick and Desjardins, Guillaume and Lerchner, Alexander},
-  journal={arXiv preprint arXiv:1804.03599},
-  year={2018}
-  }
-
-  % beta-TC VAE
-  @inproceedings{chen2018isolating,
-  title={Isolating sources of disentanglement in variational autoencoders},
-  author={Chen, Tian Qi and Li, Xuechen and Grosse, Roger B and Duvenaud, David K},
-  booktitle={Advances in Neural Information Processing Systems},
-  pages={2610--2620},
-  year={2018}
-  }
-
-  @inproceedings{kim2018disentangling,
-  title={Disentangling by Factorising},
-  author={Kim, Hyunjik and Mnih, Andriy},
-  booktitle={International Conference on Machine Learning},
-  pages={2649--2658},
-  year={2018}
-  }
-
-
-%-------------------------------------------%
-% Misc
-
-  % NACA
-  @article{naca,
-    title={The characteristics of 78 related airfoil sections from tests in the variable-density wind tunnel},
-    author={Jacobs, Eastman N and Ward, Kenneth E and Pinkerton, Robert M},
-    year={1933}
-  }
-
-  % Splines
-  @book{nurbs,
-    title={The NURBS book},
-    author={Piegl, Les and Tiller, Wayne},
-    year={2012},
-    publisher={Springer Science \& Business Media}
-  }
-
-  % UCB
-  @article{auer2002finite,
-  title={Finite-time analysis of the multiarmed bandit problem},
-  author={Auer, Peter and Cesa-Bianchi, Nicolo and Fischer, Paul},
-  journal={Machine learning},
-  volume={47},
-  number={2-3},
-  pages={235--256},
-  year={2002},
-  publisher={Springer}
-  }
-
-  % Non-stationary bandit problems
-  @inproceedings{garivier2011upper,
-    title={On upper-confidence bound policies for switching bandit problems},
-    author={Garivier, Aur{\'e}lien and Moulines, Eric},
-    booktitle={International Conference on Algorithmic Learning Theory},
-    pages={174--188},
+  
+  @article{lehman2011abandoning,
+    title={Abandoning objectives: Evolution through the search for novelty alone},
+    author={Lehman, Joel and Stanley, Kenneth O},
+    journal={Evolutionary computation},
+    volume={19},
+    number={2},
+    pages={189--223},
     year={2011},
-    organization={Springer}
+    publisher={MIT Press}
   }
-
-  % PCA
-  @article{pca,
-  title={Principal component analysis},
-  author={Wold, Svante and Esbensen, Kim and Geladi, Paul},
-  journal={Chemometrics and intelligent laboratory systems},
-  volume={2},
-  number={1-3},
-  pages={37--52},
-  year={1987},
-  publisher={Elsevier}
+  
+  @inproceedings{lehman2011evolving,
+    title={Evolving a diversity of virtual creatures through novelty search and local competition},
+    author={Lehman, Joel and Stanley, Kenneth O},
+    booktitle={Proceedings of the 13th annual conference on Genetic and Evolutionary Computation (GECCO 2011)},
+    pages={211--218},
+    year={2011}
   }
-
-  % bayesian optimization
-  @article{bo,
-  title={Taking the human out of the loop: A review of Bayesian optimization},
-  author={Shahriari, Bobak and Swersky, Kevin and Wang, Ziyu and Adams, Ryan P and De Freitas, Nando},
-  journal={Proceedings of the IEEE},
-  volume={104},
-  number={1},
-  pages={148--175},
-  year={2015},
-  publisher={IEEE}
- }
-
-
-%-------------------------------------------%
-Modularity
-@article{mouret2008mennag,
-  title={MENNAG: a modular, regular and hierarchical encoding for neural-networks based on attribute grammars},
-  author={Mouret, Jean-Baptiste and Doncieux, St{\'e}phane},
-  journal={Evolutionary Intelligence},
-  volume={1},
-  number={3},
-  pages={187--207},
-  year={2008},
-  publisher={Springer}
-}
-
-@article{durr2010genetic,
-  title={Genetic representation and evolvability of modular neural controllers},
-  author={Durr, Peter and Floreano, Dario and Mattiussi, Claudio},
-  journal={IEEE Computational Intelligence Magazine},
-  volume={5},
-  number={3},
-  pages={10--19},
-  year={2010},
-  publisher={IEEE}
-}
-
-
-And potentially (if there is space left for references):
-
-@article{hornby2002creating,
-  title={Creating high-level components with a generative representation for body-brain evolution},
-  author={Hornby, Gregory S and Pollack, Jordan B},
-  journal={Artificial life},
-  volume={8},
-  number={3},
-  pages={223--246},
-  year={2002},
-  publisher={MIT Press}
-}
-
-
-@inproceedings{doncieux2004evolving,
-  title={Evolving modular neural networks to solve challenging control problems},
-  author={Doncieux, Stephane and Meyer, Jean-Arcady},
-  booktitle={Proceedings of the Fourth International ICSC Symposium on engineering of intelligent systems (EIS 2004)},
-  pages={1--7},
-  year={2004},
-  organization={ICSC Academic Press Canada}
-}
-
-%-------------------------------------------%
-Misc 
-% Fruit Fly Genome
-@article{fruitfly,
-  title={The genome sequence of Drosophila melanogaster},
-  author={Adams, Mark D and Celniker, Susan E and Holt, Robert A and Evans, Cheryl A and Gocayne, Jeannine D and Amanatides, Peter G and Scherer, Steven E and Li, Peter W and Hoskins, Roger A and Galle, Richard F and others},
-  journal={Science},
-  volume={287},
-  number={5461},
-  pages={2185--2195},
-  year={2000},
-  publisher={American Association for the Advancement of Science}
-}
-
-% PyBullet
-@article{coumans2016pybullet,
-  title={Pybullet, a python module for physics simulation for games, robotics and machine learning},
-  author={Coumans, Erwin and Bai, Yunfei},
-  journal={GitHub repository},
-  year={2016}
-}
-
-@article{cmaes,
-  title={Completely derandomized self-adaptation in evolution strategies},
-  author={Hansen, Nikolaus and Ostermeier, Andreas},
-  journal={Evolutionary computation},
-  volume={9},
-  number={2},
-  pages={159--195},
-  year={2001},
-  publisher={MIT Press}
-}
-
-@article{such2017deep,
-  title={Deep neuroevolution: Genetic algorithms are a competitive alternative for training deep neural networks for reinforcement learning},
-  author={Such, Felipe Petroski and Madhavan, Vashisht and Conti, Edoardo and Lehman, Joel and Stanley, Kenneth O and Clune, Jeff},
-  journal={arXiv preprint arXiv:1712.06567},
-  year={2017}
-}
-
-
-@article{mayne2000constrained,
-  title={Constrained model predictive control: Stability and optimality},
-  author={Mayne, David Q and Rawlings, James B and Rao, Christopher V and Scokaert, Pierre OM},
-  journal={Automatica},
-  volume={36},
-  number={6},
-  pages={789--814},
-  year={2000},
-  publisher={Elsevier}
-}
-
-@article{such2017deep,
-  title={Deep neuroevolution: Genetic algorithms are a competitive alternative for training deep neural networks for reinforcement learning},
-  author={Such, Felipe Petroski and Madhavan, Vashisht and Conti, Edoardo and Lehman, Joel and Stanley, Kenneth O and Clune, Jeff},
-  journal={arXiv preprint arXiv:1712.06567},
-  year={2017}
-}
+  
+  @article{brochu2010tutorial,
+    title={A tutorial on Bayesian optimization of expensive cost functions, with application to active user modeling and hierarchical reinforcement learning},
+    author={Brochu, Eric and Cora, Vlad M and De Freitas, Nando},
+    journal={arXiv preprint arXiv:1012.2599},
+    year={2010}
+  }
+  
+  
 </script>
 <!--
 
