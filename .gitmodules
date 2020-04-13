@@ -1,0 +1,6 @@
+[submodule "src/pymap_elites"]
+	path = src/pymap_elites
+	url = https://github.com/resibots/pymap_elites.git
+[submodule "src/pyhexapod"]
+	path = src/pyhexapod
+	url = https://github.com/resibots/pyhexapod

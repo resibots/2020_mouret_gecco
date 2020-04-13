@@ -2,12 +2,12 @@
 # Kinematic arm experiment from:
 # Mouret JB and Maguire G. (2020) Quality Diversity for Multitask Optimization. Proc of ACM GECCO/
 
-from math import cos, sin, pi, sqrt
-import numpy as np
-import sys
-
+# (so that we do not need to install the module properly)
 import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'pymap_elites')))
 
+import math
+import numpy as np
 import map_elites.multitask as mt_map_elites
 import map_elites.common as cm_map_elites
 
@@ -19,6 +19,7 @@ class Arm:
         self.joint_xy = []
 
     def fw_kinematics(self, p):
+        from math import cos, sin, pi, sqrt
         assert(len(p) == self.n_dofs)
         p = np.append(p, 0)
         self.joint_xy = []
@@ -39,8 +40,7 @@ def fitness_arm(angles, task):
     angular_range = task[0] / len(angles)
     lengths = np.ones(len(angles)) * task[1] / len(angles)
     target = 0.5 * np.ones(2)
-    a = kinematic_arm.Arm(lengths)
-    # command in 
+    a = Arm(lengths)
     command = (angles - 0.5) * angular_range * math.pi * 2
     ef, _ = a.fw_kinematics(command)
     f = -np.linalg.norm(ef - target)
@@ -48,7 +48,7 @@ def fitness_arm(angles, task):
 
     
 if len(sys.argv) == 1 or ('help' in sys.argv):
-    print("Usage: \"python3 ./examples/multitask_arm.py 10 [no_distance]\"")
+    print("Usage: \"python3 ./examples/multitask_arm.py dimension [no_distance]\"")
     exit(0)
 
 
@@ -69,7 +69,7 @@ c = cm_map_elites.cvt(n_tasks, dim_map, 30000, True)
 
 # CVT-based version
 if len(sys.argv) == 2 or sys.argv[2] == 'distance':
-    archive = mt_map_elites.compute(dim_x = dim_x, f=fitness_arm, centroids=c, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))
+    archive = mt_map_elites.compute(dim_x=dim_x, f=fitness_arm, centroids=c, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))
 else:
     # no distance:
-    archive = mt_map_elites.compute(dim_x = dim_x, f=fitness_arm, tasks=c, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))
+    archive = mt_map_elites.compute(dim_x=dim_x, f=fitness_arm, tasks=c, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))
