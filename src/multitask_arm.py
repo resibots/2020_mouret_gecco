@@ -61,11 +61,12 @@ px["min"] = np.zeros(dim_x)
 px["max"] = np.ones(dim_x)
 px["parallel"] = False
 
+# number of tasks
 n_tasks = 5000
-dim_map = 2
 
 # example : create centroids using a CVT (you can also create them randomly)
-c = cm_map_elites.cvt(n_tasks, dim_map, 30000, True)
+# -> this is a numpy array with rows=number of tasks, and cols=dimension of the task
+c = cm_map_elites.cvt(n_tasks, 2, 30000, True)
 
 # CVT-based version
 if len(sys.argv) == 2 or sys.argv[2] == 'distance':

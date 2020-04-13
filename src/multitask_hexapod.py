@@ -1,57 +1,26 @@
-#! /usr/bin/env python
-#| This file is a part of the pymap_elites framework.
-#| Copyright 2019, INRIA
-#| Main contributor(s):
-#| Jean-Baptiste Mouret, jean-baptiste.mouret@inria.fr
-#| Eloise Dalin , eloise.dalin@inria.fr
-#| Pierre Desreumaux , pierre.desreumaux@inria.fr
-#|
-#|
-#| **Main paper**: Mouret JB, Clune J. Illuminating search spaces by
-#| mapping elites. arXiv preprint arXiv:1504.04909. 2015 Apr 20.
-#|
-#| This software is governed by the CeCILL license under French law
-#| and abiding by the rules of distribution of free software.  You
-#| can use, modify and/ or redistribute the software under the terms
-#| of the CeCILL license as circulated by CEA, CNRS and INRIA at the
-#| following URL "http://www.cecill.info".
-#|
-#| As a counterpart to the access to the source code and rights to
-#| copy, modify and redistribute granted by the license, users are
-#| provided only with a limited warranty and the software's author,
-#| the holder of the economic rights, and the successive licensors
-#| have only limited liability.
-#|
-#| In this respect, the user's attention is drawn to the risks
-#| associated with loading, using, modifying and/or developing or
-#| reproducing the software by the user in light of its specific
-#| status of free software, that may mean that it is complicated to
-#| manipulate, and that also therefore means that it is reserved for
-#| developers and experienced professionals having in-depth computer
-#| knowledge. Users are therefore encouraged to load and test the
-#| software's suitability as regards their requirements in conditions
-#| enabling the security of their systems and/or data to be ensured
-#| and, more generally, to use and operate it in the same conditions
-#| as regards security.
-#|
-#| The fact that you are presently reading this means that you have
-#| had knowledge of the CeCILL license and that you accept its terms.
-# 
+#! /usr/bin/env python3
+# Kinematic arm experiment from:
+# Mouret JB and Maguire G. (2020) Quality Diversity for Multitask Optimization. Proc of ACM GECCO/
 
-import map_elites
+# (so that we do not need to install the module properly)
+import sys, os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'pymap_elites')))
+
+import time
 import math
 import numpy as np
-import sys
+import pybullet
+
 import pyhexapod.simulator as simulator
 import pycontrollers.hexapod_controller as ctrl
-import pybullet
-import time
+import map_elites.multitask as mt_map_elites
+import map_elites.common as cm_map_elites
 
 
 def hexapod(x, features):
-    t0 = time.perf_counter()
+    #t0 = time.perf_counter()
     urdf_file = features[1]
-    simu = simulator.HexapodSimulator(gui=False, urdf=urdf_file)
+    simu = simulator.HexapodSimulator(gui=False, urdf=urdf_file,video='')
     controller = ctrl.HexapodController(x)
     dead = False
     fit = -1e10
@@ -68,7 +37,7 @@ def hexapod(x, features):
         i += 1
     fit = p[0]
     #print(time.perf_counter() - t0, " ms", '=>', fit)
-    return fit, features    
+    return fit 
 
 
 def load(directory, k):
@@ -81,17 +50,15 @@ def load(directory, k):
         tasks += [(centroid, urdf_file)]
     return np.array(centroids), tasks
 
-print('loading files...', end='')
-centroids, tasks = load(sys.argv[2], 2000)
+print('loading URDF files...', end='')
+centroids, tasks = load(sys.argv[1], 2000) # 2000 tasks
 print('data loaded')
 dim_x = 36
 
-px = map_elites.default_params.copy()
-px['multi_task'] = True
-px['multi_mode'] = sys.argv[1]
-px['n_size'] = 100
-px['min'] = [0.] * dim_x
-px['max'] = [1.] * dim_x
+px = cm_map_elites.default_params.copy()
+px['min'] = np.zeros(dim_x)
+px['max'] = np.ones(dim_x)
+px['parallel'] = True
 
 
-archive = map_elites.compute(dim_map=2, dim_x=dim_x, f=hexapod, centroids=centroids, tasks=tasks, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))
+archive = mt_map_elites.compute(dim_map=2, dim_x=dim_x, f=hexapod, centroids=centroids, tasks=tasks, num_evals=1e6, params=px, log_file=open('cover_max_mean.dat', 'w'))

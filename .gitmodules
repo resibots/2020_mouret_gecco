@@ -4,3 +4,6 @@
 [submodule "src/pyhexapod"]
 	path = src/pyhexapod
 	url = https://github.com/resibots/pyhexapod
+[submodule "src/pycontrollers"]
+	path = src/pycontrollers
+	url = https://github.com/resibots/pycontrollers
