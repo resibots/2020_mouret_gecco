@@ -4,7 +4,7 @@ Quality Diversity (QD) algorithms are a recent family of optimization algorithms
 
 
 <div style="text-align: center;">
-<img class="b-lazy" src="assets/png/results_hexapod.png" style="width: 75%;"/>
+<img class="b-lazy" src="assets/png/results_hexapod.png" style="width: 100%;"/>
 <br/>
 <figcaption style="text-align: left;">
 <b>(A) The robot is parameterized by 12 values that correspond to the length of the 12 segments indicated b
