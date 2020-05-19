@@ -14,11 +14,10 @@ BibTeX citation
 
 <pre class="citation long">@inproceedings{mouret2020,
   author = {Jean-Baptiste Mouret and Glenn Maguire},
-  title  = {uality Diversity for Multitask Optimization},
+  title  = {Quality Diversity for Multitask Optimization},
   eprint = {arXiv:2003.04407},
   booktitle = {Proceedings of GECCO},
   url    = {https://resibots.eu/2020_mouret_gecco},
-  note   = "\url{https://resibots.eu/2020_mouret_gecco}",
   year   = {2020}
 }</pre>
 
