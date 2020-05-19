@@ -23,4 +23,4 @@ BibTeX citation
 
 ## Open Source Code
 
-https://github.com/resibots/2020_mouret_gecco
+[https://github.com/resibots/2020_mouret_gecco]
